@@ -52,8 +52,8 @@ const getPayoffDetails = (currentLoan, desiredSpending) => {
   return { payments, totalInterest };
 };
 
-const getCurrentLoan = (state) => state.currentLoan;
-const getDesiredSpending = (state) => state.desiredSpending;
+const getCurrentLoan = (state) => state.loans.currentLoan;
+const getDesiredSpending = (state) => state.loans.desiredSpending;
 
 export const payoffDetails = createSelector([getCurrentLoan], (currentLoan) => {
   return getPayoffDetails(currentLoan, 0);

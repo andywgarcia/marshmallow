@@ -16,7 +16,7 @@ const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
 
 const mapStateToProps = (state) => {
   return {
-    desiredSpendingAmount: state.desiredSpending,
+    desiredSpendingAmount: state.loans.desiredSpending,
   };
 };
 

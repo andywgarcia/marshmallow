@@ -31,7 +31,7 @@ const mapStateToProps = (state) => {
   return {
     payments: payoffDetails.payments,
     totalInterest: parseFloat(payoffDetails.totalInterest),
-    principal: parseFloat(state.currentLoan.currentBalance),
+    principal: parseFloat(state.loans.currentLoan.currentBalance),
   };
 };
 

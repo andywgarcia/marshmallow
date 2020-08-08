@@ -38,7 +38,7 @@ function LoanInformation(props) {
 }
 
 const mapStateToProps = (state) => ({
-  ...state.currentLoan,
+  ...state.loans.currentLoan,
 });
 
 const mapDispatchToProps = {
