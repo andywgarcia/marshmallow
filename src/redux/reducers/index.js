@@ -5,11 +5,16 @@ const initalPayoffDetails = {
   totalInterest: 0,
 };
 
+const initialCurrentLoan = {
+  currentBalance: 10000,
+  interestRate: 3,
+  monthlyPayment: 100,
+};
 const initialState = {
   desiredSpending: 0,
-  currentLoan: { currentBalance: 10000, interestRate: 3, monthlyPayment: 100 },
-  payoffDetails: { ...initalPayoffDetails },
-  payoffSavingsDetails: { ...initalPayoffDetails },
+  currentLoan: { ...initialCurrentLoan },
+  payoffDetails: getPayoffDetails(initialCurrentLoan),
+  payoffSavingsDetails: getPayoffDetails(initialCurrentLoan),
 };
 
 function getPayoffDetails(
