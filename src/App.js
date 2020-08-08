@@ -5,6 +5,7 @@ import Amount from "./Amount";
 import PayoffInformation from "./PayoffInformation";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import TotalCost from "./TotalCost";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <LoanInformation />
         <PayoffInformation />
         <Amount />
+        <TotalCost />
       </div>
     </Provider>
   );

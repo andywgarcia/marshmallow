@@ -10,6 +10,6 @@ export const setLoanInfo = (loanInfo) => {
 export const setDesiredSpending = (amount) => {
   return {
     type: Actions.SET_DESIRED_SPENDING,
-    payload: amount,
+    payload: parseFloat(amount),
   };
 };

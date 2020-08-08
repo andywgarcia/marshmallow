@@ -7,11 +7,15 @@ const initalPayoffDetails = {
 
 const initialState = {
   desiredSpending: 0,
-  currentLoan: { currentBalance: 100, interestRate: 1, monthlyPayment: 100 },
+  currentLoan: { currentBalance: 10000, interestRate: 3, monthlyPayment: 100 },
   payoffDetails: { ...initalPayoffDetails },
+  payoffSavingsDetails: { ...initalPayoffDetails },
 };
 
-function getPayoffDetails({ currentBalance, interestRate, monthlyPayment }) {
+function getPayoffDetails(
+  { currentBalance, interestRate, monthlyPayment },
+  extraPayment = 0
+) {
   // Assumes monthly capitalization
   if (
     parseInt(currentBalance) === 0 ||
@@ -39,7 +43,10 @@ function getPayoffDetails({ currentBalance, interestRate, monthlyPayment }) {
     balance = parseFloat(balance) + parseFloat(growthAmount);
 
     // Pay monthly payment
-    balance = balance - currentMonthPayment;
+    balance = balance - currentMonthPayment - extraPayment;
+
+    // Only use the extra payment once
+    extraPayment = 0;
 
     // Don't let it go longer than 30 years for performance sake
     if (payments.length > 12 * 30) {
@@ -65,16 +72,21 @@ function rootReducer(state = initialState, action) {
         ).toFixed(2),
       };
 
-      const payoffDetails = getPayoffDetails(newCurrentLoan);
       return {
         ...state,
         currentLoan: newCurrentLoan,
-        payoffDetails: payoffDetails,
+        payoffDetails: getPayoffDetails(newCurrentLoan),
+        payoffSavingsDetails: getPayoffDetails(newCurrentLoan),
       };
     case Actions.SET_DESIRED_SPENDING:
       return {
         ...state,
         desiredSpending: action.payload,
+        payoffDetails: getPayoffDetails(state.currentLoan),
+        payoffSavingsDetails: getPayoffDetails(
+          state.currentLoan,
+          action.payload
+        ),
       };
     default:
       return state;

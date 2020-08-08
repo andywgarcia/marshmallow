@@ -1,17 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
 
-const TotalCost = ({ potentialInterestSaved }) => {
+const TotalCost = ({ interestSaved }) => {
   return (
     <div>
-      <h1>Interest Saved ${potentialInterestSaved}</h1>
+      <h1>Interest Saved ${interestSaved.toFixed(2)}</h1>
     </div>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
-    potentialInterestSaved: state.potentialInterestSaved,
+    interestSaved:
+      state.payoffDetails.totalInterest -
+      state.payoffSavingsDetails.totalInterest,
     totalCost: state.desiredSpending + state.potentialInterestSaved,
   };
 };
