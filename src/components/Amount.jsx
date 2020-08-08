@@ -6,14 +6,18 @@ import { TextField } from "@material-ui/core";
 const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
   return (
     <div>
-      <TextField
-        id="amount-input"
-        label="Amount"
-        margin="normal"
-        variant="outlined"
-        value={desiredSpendingAmount}
-        onChange={({ target: { value } }) => setDesiredSpending(value)}
-      />
+      {" "}
+      <h1>Available Amounts</h1>
+      <div>
+        <TextField
+          id="amount-input"
+          label="Amount"
+          margin="normal"
+          variant="outlined"
+          value={desiredSpendingAmount}
+          onChange={({ target: { value } }) => setDesiredSpending(value)}
+        />
+      </div>
     </div>
   );
 };
