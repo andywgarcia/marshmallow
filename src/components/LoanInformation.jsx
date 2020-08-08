@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { setLoanInfo } from "../redux/actionCreators";
-import TextField from "@material-ui/core/TextField";
+import { TextField, InputAdornment } from "@material-ui/core";
 
 function LoanInformation(props) {
   const [balance, setBalance] = useState(props.currentBalance);
@@ -16,6 +16,9 @@ function LoanInformation(props) {
           label="Current Balance"
           variant="outlined"
           margin="normal"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
           value={balance}
           onChange={({ target: { value } }) => setBalance(value)}
           onBlur={() => props.setLoanInfo({ currentBalance: balance })}
@@ -27,6 +30,9 @@ function LoanInformation(props) {
           label="Interest Rate %"
           variant="outlined"
           margin="normal"
+          InputProps={{
+            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+          }}
           value={interest}
           onChange={({ target: { value } }) => setInterest(value)}
           onBlur={() => props.setLoanInfo({ interestRate: interest })}
@@ -38,6 +44,9 @@ function LoanInformation(props) {
           label="Monthly Payment"
           variant="outlined"
           margin="normal"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
           value={monthlyPayment}
           onChange={({ target: { value } }) => setMonthlyPayment(value)}
           onBlur={() => props.setLoanInfo({ monthlyPayment: monthlyPayment })}
