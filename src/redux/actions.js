@@ -1,0 +1,2 @@
+export const SET_LOAN_INFO = "SET_LOAN_INFO";
+export const SET_DESIRED_SPENDING = "SET_DESIRED_SPENDING";
