@@ -5,12 +5,12 @@ Input:
 - User's current loan
   - Principal Amount
   - Interest Rate
-  - Monthly Payment (assume static after additional payments)
-- Current amount they want to spend
+  - Monthly Payment (this is specifically amount they are paying per month, not the minimum amount)
+- Current amount they have to put towards the loans
 
 Output:
 
-- The amount of interest accrued by spending that amount today versus putting it towards the loans plus the original amount
+- The amount of interest saved by putting it towards the loans versus spending that amount today
 
 Assumptions:
 
