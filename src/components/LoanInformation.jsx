@@ -14,7 +14,8 @@ function LoanInformation(props) {
         <TextField
           id="loan-current-balance-input"
           label="Current Balance"
-          variant="filled"
+          variant="outlined"
+          margin="normal"
           value={balance}
           onChange={({ target: { value } }) => setBalance(value)}
           onBlur={() => props.setLoanInfo({ currentBalance: balance })}
@@ -24,7 +25,8 @@ function LoanInformation(props) {
         <TextField
           id="loan-interest-rate-input"
           label="Interest Rate %"
-          variant="filled"
+          variant="outlined"
+          margin="normal"
           value={interest}
           onChange={({ target: { value } }) => setInterest(value)}
           onBlur={() => props.setLoanInfo({ interestRate: interest })}
@@ -34,7 +36,8 @@ function LoanInformation(props) {
         <TextField
           id="loan-monthly-payment-input"
           label="Monthly Payment"
-          variant="filled"
+          variant="outlined"
+          margin="normal"
           value={monthlyPayment}
           onChange={({ target: { value } }) => setMonthlyPayment(value)}
           onBlur={() => props.setLoanInfo({ monthlyPayment: monthlyPayment })}

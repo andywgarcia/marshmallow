@@ -8,16 +8,20 @@ import store from "./redux/store";
 import TotalCost from "./components/TotalCost";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
+import { Divider } from "@material-ui/core";
 
 function App() {
   return (
     <React.Fragment>
       <CssBaseline />
       <Provider store={store}>
-        <Container maxWidth="sm" className="App">
+        <Container maxWidth="xs" className="App">
           <LoanInformation />
+          <Divider />
           <PayoffInformation />
+          <Divider />
           <Amount />
+          <Divider />
           <TotalCost />
         </Container>
       </Provider>
