@@ -81,7 +81,10 @@ function rootReducer(state = initialState, action) {
         ...state,
         currentLoan: newCurrentLoan,
         payoffDetails: getPayoffDetails(newCurrentLoan),
-        payoffSavingsDetails: getPayoffDetails(newCurrentLoan),
+        payoffSavingsDetails: getPayoffDetails(
+          newCurrentLoan,
+          state.desiredSpending
+        ),
       };
     case Actions.SET_DESIRED_SPENDING:
       return {
