@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as selectors from "./redux/selectors";
+import * as selectors from "../redux/selectors";
 const PayoffInformation = (props) => {
   return (
     <div>

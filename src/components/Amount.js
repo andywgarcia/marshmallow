@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { setDesiredSpending } from "./redux/actionCreators";
+import { setDesiredSpending } from "../redux/actionCreators";
 
 const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
   return (

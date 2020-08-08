@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { setLoanInfo } from "./redux/actionCreators";
+import { setLoanInfo } from "../redux/actionCreators";
 
 function LoanInformation(props) {
   const [balance, setBalance] = useState(props.currentBalance);

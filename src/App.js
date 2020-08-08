@@ -1,11 +1,11 @@
 import React from "react";
 import "./App.css";
-import LoanInformation from "./LoanInformation";
-import Amount from "./Amount";
-import PayoffInformation from "./PayoffInformation";
+import LoanInformation from "./components/LoanInformation";
+import Amount from "./components/Amount";
+import PayoffInformation from "./components/PayoffInformation";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import TotalCost from "./TotalCost";
+import TotalCost from "./components/TotalCost";
 
 function App() {
   return (
