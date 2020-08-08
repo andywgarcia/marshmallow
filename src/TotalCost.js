@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import * as selectors from "./redux/selectors";
 
 const TotalCost = ({ interestSaved, monthsSooner }) => {
   return (
@@ -11,13 +12,13 @@ const TotalCost = ({ interestSaved, monthsSooner }) => {
 };
 
 const mapStateToProps = (state) => {
+  const payoffDetails = selectors.payoffDetails(state);
+  const payoffSavingsDetails = selectors.payoffSavingsDetails(state);
   return {
     interestSaved:
-      state.payoffDetails.totalInterest -
-      state.payoffSavingsDetails.totalInterest,
+      payoffDetails.totalInterest - payoffSavingsDetails.totalInterest,
     monthsSooner:
-      state.payoffDetails.payments.length -
-      state.payoffSavingsDetails.payments.length,
+      payoffDetails.payments.length - payoffSavingsDetails.payments.length,
   };
 };
 

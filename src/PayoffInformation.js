@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
+import * as selectors from "./redux/selectors";
 const PayoffInformation = (props) => {
-  console.log(props);
   return (
     <div>
       <div>
@@ -26,10 +26,13 @@ PayoffInformation.defaultProps = {
   principal: 0,
 };
 
-const mapStateToProps = (state) => ({
-  payments: state.payoffDetails.payments,
-  totalInterest: parseFloat(state.payoffDetails.totalInterest),
-  principal: parseFloat(state.currentLoan.currentBalance),
-});
+const mapStateToProps = (state) => {
+  const payoffDetails = selectors.payoffDetails(state);
+  return {
+    payments: payoffDetails.payments,
+    totalInterest: parseFloat(payoffDetails.totalInterest),
+    principal: parseFloat(state.currentLoan.currentBalance),
+  };
+};
 
 export default connect(mapStateToProps)(PayoffInformation);
