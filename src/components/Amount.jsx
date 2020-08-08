@@ -6,7 +6,6 @@ import { TextField } from "@material-ui/core";
 const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
   return (
     <div>
-      {" "}
       <h1>Available Amounts</h1>
       <div>
         <TextField
