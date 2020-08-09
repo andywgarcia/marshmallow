@@ -63,9 +63,9 @@ function App() {
 
   return (
     <React.Fragment>
-      <CssBaseline />
       <Provider store={store}>
-        <Container maxWidth="xs" className={`App ${classes.Root}`}>
+        <div className={classes.root}>
+          <CssBaseline />
           <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>
               <IconButton
@@ -88,14 +88,16 @@ function App() {
             theme={theme}
             isMobileOpen={mobileOpen}
           />
-          <main className={classes.content}>
-            <div className={classes.toolbar} />
-            <Router>
-              <LoanCalculator path="/" />
-              <AddLoanForm path="/loan" />
-            </Router>
-          </main>
-        </Container>
+          <Container maxWidth="xs" className={`App ${classes.Root} `}>
+            <main className={classes.content}>
+              <div className={classes.toolbar} />
+              <Router>
+                <LoanCalculator path="/" />
+                <AddLoanForm path="/loan" />
+              </Router>
+            </main>
+          </Container>
+        </div>
       </Provider>
     </React.Fragment>
   );

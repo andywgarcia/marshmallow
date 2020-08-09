@@ -52,7 +52,7 @@ function LeftDrawer(props) {
   return (
     <nav className={props.classes.drawer} aria-label="mailbox folders">
       {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-      <Hidden smUp implementation="css">
+      <Hidden smUp>
         <Drawer
           container={container}
           variant="temporary"
@@ -69,7 +69,7 @@ function LeftDrawer(props) {
           {drawer}
         </Drawer>
       </Hidden>
-      <Hidden xsDown implementation="css">
+      <Hidden xsDown>
         <Drawer
           classes={{
             paper: props.classes.drawerPaper,
