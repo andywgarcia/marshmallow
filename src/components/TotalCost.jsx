@@ -7,7 +7,7 @@ const TotalCost = ({ interestSaved, monthsSooner }) => {
   return (
     <div>
       <Typography variant="h6" color="initial">
-        You would save{" "}
+        would save you{" "}
         <span style={{ color: "green" }}>${interestSaved.toFixed(2)}</span> in
         interest
       </Typography>
@@ -22,8 +22,6 @@ const TotalCost = ({ interestSaved, monthsSooner }) => {
 const mapStateToProps = (state) => {
   const payoffDetails = selectors.originalPayoffDetails(state);
   const payoffSavingsDetails = selectors.payoffSavingsDetails(state);
-  console.log("payoffDetails", payoffDetails);
-  console.log("payoffSavingsDetails", payoffSavingsDetails);
   const originalMonthsPayoff = Math.max(
     ...payoffDetails.payments.map(
       (loanPayments) => loanPayments.payments.length

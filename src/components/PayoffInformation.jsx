@@ -59,7 +59,6 @@ PayoffInformation.defaultProps = {
 };
 
 const mapStateToProps = (state) => {
-  console.log(selectors);
   const payoffDetails = selectors.originalPayoffDetails(state);
   const reducedLoans = state.loans.allLoans.reduce(
     (acc, curr) => {

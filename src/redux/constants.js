@@ -1,4 +1,4 @@
 export const PAYOFF_METHODS = {
-  DEBT_SNOWBALL: "DEBT_SNOWBALL",
-  DEBT_AVALANCHE: "DEBT_AVALANCHE",
+  DEBT_SNOWBALL: "Debt Snowball (Lowest Balance First)",
+  DEBT_AVALANCHE: "Debt Avalanche (Highest Interest First)",
 };

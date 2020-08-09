@@ -7,12 +7,12 @@ const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
   return (
     <div>
       <Typography variant="h6" color="initial">
-        If you were to make a one-time extra payment of{" "}
+        A one-time extra payment of{" "}
       </Typography>
       <div>
         <TextField
           id="amount-input"
-          label="Amount"
+          label="One Time Extra Payment"
           margin="normal"
           variant="outlined"
           value={desiredSpendingAmount}
