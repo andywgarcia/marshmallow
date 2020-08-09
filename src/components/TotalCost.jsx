@@ -12,13 +12,24 @@ const TotalCost = ({ interestSaved, monthsSooner }) => {
 };
 
 const mapStateToProps = (state) => {
-  const payoffDetails = selectors.payoffDetails(state);
+  const payoffDetails = selectors.originalPayoffDetails(state);
   const payoffSavingsDetails = selectors.payoffSavingsDetails(state);
+  console.log("payoffDetails", payoffDetails);
+  console.log("payoffSavingsDetails", payoffSavingsDetails);
+  const originalMonthsPayoff = Math.max(
+    ...payoffDetails.payments.map(
+      (loanPayments) => loanPayments.payments.length
+    )
+  );
+  const savedMonthsPayoff = Math.max(
+    ...payoffSavingsDetails.payments.map(
+      (loanPayments) => loanPayments.payments.length
+    )
+  );
   return {
     interestSaved:
       payoffDetails.totalInterest - payoffSavingsDetails.totalInterest,
-    monthsSooner:
-      payoffDetails.payments.length - payoffSavingsDetails.payments.length,
+    monthsSooner: originalMonthsPayoff - savedMonthsPayoff,
   };
 };
 

@@ -1,5 +1,4 @@
 import * as Actions from "../actions";
-import { loadState } from "../localStorage";
 
 const initialCurrentLoan = {
   currentBalance: 10000,

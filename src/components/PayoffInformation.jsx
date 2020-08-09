@@ -35,7 +35,7 @@ const PayoffInformation = (props) => {
           variant="filled"
           disabled
           margin="normal"
-          value={props.payments.length || 0}
+          value={props.monthsAwayFromPayoff}
         />
       </div>
       <div>
@@ -53,7 +53,7 @@ const PayoffInformation = (props) => {
 };
 
 PayoffInformation.defaultProps = {
-  payments: [],
+  monthsAwayFromPayoff: 0,
   totalInterest: 0,
   principal: 0,
 };
@@ -72,7 +72,11 @@ const mapStateToProps = (state) => {
     { totalPrincipal: 0, totalMonthlyPayment: 0 }
   );
   return {
-    payments: payoffDetails.payments,
+    monthsAwayFromPayoff: Math.max(
+      ...payoffDetails.payments.map(
+        (loanPayments) => loanPayments.payments.length
+      )
+    ),
     totalInterest: payoffDetails.totalInterest,
     principal: reducedLoans.totalPrincipal,
     monthlyPayment: reducedLoans.totalMonthlyPayment,
