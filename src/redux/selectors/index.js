@@ -63,3 +63,11 @@ export const payoffSavingsDetails = createSelector(
   [getCurrentLoan, getDesiredSpending],
   getPayoffDetails
 );
+
+export const getLoan = createSelector(
+  [
+    (state, props) =>
+      state.loans.allLoans.find((loan) => loan.id === props.loanId),
+  ],
+  (loan) => loan
+);

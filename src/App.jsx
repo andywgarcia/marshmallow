@@ -4,7 +4,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import { Router } from "@reach/router";
 import LoanCalculator from "./pages/LoanCalculator";
-import AddLoanForm from "./pages/AddLoanForm";
+import EditLoan from "./pages/EditLoan";
 import LeftDrawer from "./components/navigation/LeftDrawer";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -93,7 +93,7 @@ function App() {
               <div className={classes.toolbar} />
               <Router>
                 <LoanCalculator path="/" />
-                <AddLoanForm path="/loan" />
+                <EditLoan path="/loan/:loanId" />
               </Router>
             </main>
           </Container>

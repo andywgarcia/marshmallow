@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
@@ -10,38 +10,40 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { Link } from "@reach/router";
-
-const Links = [
-  {
-    text: "Calculator",
-    location: "/",
-    icon: <AttachMoneyIcon />,
-  },
-  {
-    text: "Add Loan",
-    location: "/loan",
-    icon: <AddIcon />,
-  },
-];
+import { v4 as uuidv4 } from "uuid";
+import { connect } from "react-redux";
+import { addLoan } from "../../redux/actionCreators";
 
 function LeftDrawer(props) {
   const { window } = props;
-
+  const [id, createNewId] = useState(uuidv4());
   const drawer = (
     <div>
       <div className={props.classes.toolbar} />
       <Divider />
       <List>
-        {Links.map(({ text, location, icon }) => (
-          <Link to={location}>
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {React.createElement(icon.type, icon.props)}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          </Link>
-        ))}
+        <Link to="/">
+          <ListItem button key="Calculator">
+            <ListItemIcon>
+              <AttachMoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Calculator" />
+          </ListItem>
+        </Link>
+        <Link
+          to={`/loan/${id}`}
+          onClick={() => {
+            props.addLoan(id);
+            createNewId(uuidv4());
+          }}
+        >
+          <ListItem button key="Add Loan">
+            <ListItemIcon>
+              <AddIcon />
+            </ListItemIcon>
+            <ListItemText primary="Add Loan" />
+          </ListItem>
+        </Link>
       </List>
     </div>
   );
@@ -84,6 +86,11 @@ function LeftDrawer(props) {
   );
 }
 
+const mapStateToProps = () => ({});
+const mapDispatchToProps = {
+  addLoan,
+};
+
 LeftDrawer.propTypes = {
   isMobileOpen: PropTypes.bool,
   handleDrawerToggle: PropTypes.func,
@@ -91,4 +98,4 @@ LeftDrawer.propTypes = {
   theme: PropTypes.any,
 };
 
-export default LeftDrawer;
+export default connect(mapStateToProps, mapDispatchToProps)(LeftDrawer);

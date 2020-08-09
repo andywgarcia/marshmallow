@@ -1,11 +1,9 @@
 import * as Actions from "./actions";
+import { createAction } from "@reduxjs/toolkit";
 
-export const setLoanInfo = (loanInfo) => {
-  return {
-    type: Actions.SET_LOAN_INFO,
-    payload: loanInfo,
-  };
-};
+export const setLoanInfo = createAction(Actions.SET_LOAN_INFO);
+
+export const updateLoan = createAction(Actions.UPDATE_LOAN);
 
 export const setDesiredSpending = (amount) => {
   return {
@@ -13,3 +11,5 @@ export const setDesiredSpending = (amount) => {
     payload: parseFloat(amount || 0),
   };
 };
+
+export const addLoan = createAction(Actions.ADD_LOAN);
