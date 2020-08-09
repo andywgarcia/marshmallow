@@ -1,7 +1,7 @@
 import { PAYOFF_METHODS } from "../constants";
 
 const initialState = {
-  payoffMethod: PAYOFF_METHODS.DEBT_AVALANCHE,
+  payoffMethod: PAYOFF_METHODS.DEBT_SNOWBALL,
 };
 
 export default (state = initialState, action) => {

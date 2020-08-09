@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import { getDebtPayoffSortFunction } from "./userPreferences";
 
 const initalPayoffDetails = {
   payments: [],
@@ -54,45 +55,48 @@ const getPayoffDetails = (currentLoan, desiredSpending) => {
   return { payments, totalInterest };
 };
 
-const calculatePayoffDetails = (allLoans, desiredSpending = 0) => {
-  return [...allLoans]
-    .sort((loan1, loan2) => loan2.interestRate - loan1.interestRate)
-    .reduce(
-      (acc, curr, index) => {
-        const payoffDetails = getPayoffDetails(
+const calculatePayoffDetails = (
+  allLoans,
+  debtSortFunction,
+  desiredSpending = 0
+) => {
+  return [...allLoans].sort(debtSortFunction).reduce(
+    (acc, curr, index) => {
+      const payoffDetails = getPayoffDetails(
+        {
+          currentBalance: curr.balance,
+          interestRate: curr.interestRate,
+          monthlyPayment: curr.monthlyMinimumPayment,
+        },
+        index === 0 ? desiredSpending : 0
+      );
+      return {
+        ...acc,
+        payments: [
+          ...acc.payments,
           {
-            currentBalance: curr.balance,
-            interestRate: curr.interestRate,
-            monthlyPayment: curr.monthlyMinimumPayment,
+            loanId: curr.id,
+            payments: payoffDetails.payments,
           },
-          index === 0 ? desiredSpending : 0
-        );
-        return {
-          ...acc,
-          payments: [
-            ...acc.payments,
-            {
-              loanId: curr.id,
-              payments: payoffDetails.payments,
-            },
-          ],
-          totalInterest: acc.totalInterest + payoffDetails.totalInterest,
-        };
-      },
-      { payments: [], totalInterest: 0 }
-    );
+        ],
+        totalInterest: acc.totalInterest + payoffDetails.totalInterest,
+      };
+    },
+    { payments: [], totalInterest: 0 }
+  );
 };
 
 export const payoffSavingsDetails = createSelector(
   [
     (state) => state.loans.allLoans,
+    getDebtPayoffSortFunction,
     (state) => state.availableAmounts.desiredSpending,
   ],
   calculatePayoffDetails
 );
 
 export const originalPayoffDetails = createSelector(
-  [(state) => state.loans.allLoans],
+  [(state) => state.loans.allLoans, getDebtPayoffSortFunction],
   calculatePayoffDetails
 );
 
