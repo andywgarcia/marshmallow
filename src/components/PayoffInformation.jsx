@@ -38,6 +38,16 @@ const PayoffInformation = (props) => {
           value={props.payments.length || 0}
         />
       </div>
+      <div>
+        <TextField
+          id="total-monthly-payment"
+          label="Monthly Payment"
+          variant="filled"
+          disabled
+          margin="normal"
+          value={props.monthlyPayment}
+        />
+      </div>
     </div>
   );
 };
@@ -50,14 +60,22 @@ PayoffInformation.defaultProps = {
 
 const mapStateToProps = (state) => {
   const payoffDetails = selectors.originalPayoffDetails(state);
-  console.log("payoffDetails", payoffDetails);
+  const reducedLoans = state.loans.allLoans.reduce(
+    (acc, curr) => {
+      return {
+        ...acc,
+        totalPrincipal: acc.totalPrincipal + curr.balance,
+        totalMonthlyPayment:
+          acc.totalMonthlyPayment + curr.monthlyMinimumPayment,
+      };
+    },
+    { totalPrincipal: 0, totalMonthlyPayment: 0 }
+  );
   return {
     payments: payoffDetails.payments,
     totalInterest: payoffDetails.totalInterest,
-    principal: state.loans.allLoans.reduce(
-      (acc, curr) => acc + curr.balance,
-      0
-    ),
+    principal: reducedLoans.totalPrincipal,
+    monthlyPayment: reducedLoans.totalMonthlyPayment,
   };
 };
 
