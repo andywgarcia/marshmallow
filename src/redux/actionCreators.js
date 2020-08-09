@@ -13,3 +13,6 @@ export const setDesiredSpending = (amount) => {
 };
 
 export const addLoan = createAction(Actions.ADD_LOAN);
+export const setAvailableLoanPaymentAmount = createAction(
+  Actions.SET_AVAILABLE_LOAN_PAYMENT_AMOUNT
+);

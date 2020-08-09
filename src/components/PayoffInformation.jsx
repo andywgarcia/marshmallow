@@ -1,10 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import * as selectors from "../redux/selectors";
-import { TextField } from "@material-ui/core";
+import { TextField, Typography } from "@material-ui/core";
 const PayoffInformation = (props) => {
   return (
     <div>
+      <Typography variant="h4" color="initial">
+        Total Loan Overview
+      </Typography>
       <div>
         <TextField
           id="payoff-total-amount-paid"
@@ -46,11 +49,15 @@ PayoffInformation.defaultProps = {
 };
 
 const mapStateToProps = (state) => {
-  const payoffDetails = selectors.payoffDetails(state);
+  const payoffDetails = selectors.originalPayoffDetails(state);
+  console.log("payoffDetails", payoffDetails);
   return {
     payments: payoffDetails.payments,
-    totalInterest: parseFloat(payoffDetails.totalInterest),
-    principal: parseFloat(state.loans.currentLoan.currentBalance),
+    totalInterest: payoffDetails.totalInterest,
+    principal: state.loans.allLoans.reduce(
+      (acc, curr) => acc + curr.balance,
+      0
+    ),
   };
 };
 

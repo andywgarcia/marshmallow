@@ -52,6 +52,27 @@ const getPayoffDetails = (currentLoan, desiredSpending) => {
   return { payments, totalInterest };
 };
 
+const calculatePayoffDetails = (allLoans) => {
+  return allLoans.reduce(
+    (acc, curr) => {
+      const payoffDetails = getPayoffDetails({
+        currentBalance: curr.balance,
+        interestRate: curr.interestRate,
+        monthlyPayment: curr.monthlyMinimumPayment,
+      });
+      return {
+        ...acc,
+        payments:
+          acc.payments.length > payoffDetails.payments.length
+            ? acc.payments
+            : payoffDetails.payments,
+        totalInterest: acc.totalInterest + payoffDetails.totalInterest,
+      };
+    },
+    { payments: [], totalInterest: 0 }
+  );
+};
+
 const getCurrentLoan = (state) => state.loans.currentLoan;
 const getDesiredSpending = (state) => state.availableAmounts.desiredSpending;
 
@@ -62,6 +83,11 @@ export const payoffDetails = createSelector([getCurrentLoan], (currentLoan) => {
 export const payoffSavingsDetails = createSelector(
   [getCurrentLoan, getDesiredSpending],
   getPayoffDetails
+);
+
+export const originalPayoffDetails = createSelector(
+  [(state) => state.loans.allLoans],
+  calculatePayoffDetails
 );
 
 export const getLoan = createSelector(

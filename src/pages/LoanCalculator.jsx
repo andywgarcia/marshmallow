@@ -8,8 +8,6 @@ import { Divider } from "@material-ui/core";
 const LoanCalculator = () => {
   return (
     <div>
-      <LoanInformation />
-      <Divider />
       <PayoffInformation />
       <Divider />
       <Amount />

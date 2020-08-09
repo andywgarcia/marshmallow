@@ -2,6 +2,7 @@ import * as Actions from "../actions";
 
 const initialState = {
   desiredSpending: 0,
+  forLoanPayments: 0,
 };
 
 export default (state = initialState, action) => {
@@ -10,6 +11,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         desiredSpending: action.payload,
+      };
+    case Actions.SET_AVAILABLE_LOAN_PAYMENT_AMOUNT:
+      return {
+        ...state,
+        forLoanPayments: action.payload,
       };
     default:
       return state;
