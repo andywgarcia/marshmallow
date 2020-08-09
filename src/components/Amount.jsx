@@ -1,12 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import { setDesiredSpending } from "../redux/actionCreators";
-import { TextField } from "@material-ui/core";
+import { TextField, Typography } from "@material-ui/core";
 
 const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
   return (
     <div>
-      <h1>Available Amounts</h1>
+      <Typography variant="h6" color="initial">
+        If you were to make a one-time extra payment of{" "}
+      </Typography>
       <div>
         <TextField
           id="amount-input"

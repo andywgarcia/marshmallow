@@ -1,12 +1,20 @@
 import React from "react";
 import { connect } from "react-redux";
 import * as selectors from "../redux/selectors";
+import { Typography } from "@material-ui/core";
 
 const TotalCost = ({ interestSaved, monthsSooner }) => {
   return (
     <div>
-      <h1>Interest Saved ${interestSaved.toFixed(2)}</h1>
-      <h1>Paid off {monthsSooner} months sooner</h1>
+      <Typography variant="h6" color="initial">
+        You would save{" "}
+        <span style={{ color: "green" }}>${interestSaved.toFixed(2)}</span> in
+        interest
+      </Typography>
+      <Typography variant="h6" color="initial">
+        and be paid off{" "}
+        <span style={{ color: "green" }}>{monthsSooner} months sooner</span>
+      </Typography>
     </div>
   );
 };
