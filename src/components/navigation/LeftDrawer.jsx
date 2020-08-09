@@ -13,6 +13,7 @@ import { Link } from "@reach/router";
 import { v4 as uuidv4 } from "uuid";
 import { connect } from "react-redux";
 import { addLoan } from "../../redux/actionCreators";
+import LoansOverview from "./LoansOverview";
 
 function LeftDrawer(props) {
   const { window } = props;
@@ -45,6 +46,8 @@ function LeftDrawer(props) {
           </ListItem>
         </Link>
       </List>
+      <Divider />
+      <LoansOverview />
     </div>
   );
 

@@ -1,15 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { updateLoan } from "../redux/actionCreators";
 import { TextField, InputAdornment } from "@material-ui/core";
 import { getLoan } from "../redux/selectors";
 
 function AddLoanForm(props) {
-  const [balance, setBalance] = useState(props.balance);
-  const [interest, setInterest] = useState(props.interestRate);
-  const [monthlyMinPayment, setMonthlyMinPayment] = useState(
-    props.monthlyMinimumPayment
-  );
   return (
     <div>
       <h1>Loan Information</h1>
@@ -22,12 +17,11 @@ function AddLoanForm(props) {
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}
-          value={balance}
-          onChange={({ target: { value } }) => setBalance(value)}
-          onBlur={() =>
+          value={props.balance}
+          onChange={({ target: { value } }) =>
             props.updateLoan({
               id: props.loanId,
-              balance: parseFloat(balance || 0),
+              balance: parseFloat(value || 0),
             })
           }
         />
@@ -41,12 +35,11 @@ function AddLoanForm(props) {
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
           }}
-          value={interest}
-          onChange={({ target: { value } }) => setInterest(value)}
-          onBlur={() =>
+          value={props.interestRate}
+          onChange={({ target: { value } }) =>
             props.updateLoan({
               id: props.loanId,
-              interestRate: parseFloat(interest || 0),
+              interestRate: parseFloat(value || 0),
             })
           }
         />
@@ -60,12 +53,11 @@ function AddLoanForm(props) {
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}
-          value={monthlyMinPayment}
-          onChange={({ target: { value } }) => setMonthlyMinPayment(value)}
-          onBlur={() =>
+          value={props.monthlyMinimumPayment}
+          onChange={({ target: { value } }) =>
             props.updateLoan({
               id: props.loanId,
-              monthlyMinimumPayment: parseFloat(monthlyMinPayment || 0),
+              monthlyMinimumPayment: parseFloat(value || 0),
             })
           }
         />
@@ -75,7 +67,13 @@ function AddLoanForm(props) {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return getLoan(state, ownProps);
+  const loan = getLoan(state, ownProps);
+  return {
+    id: loan.id,
+    balance: loan.balance,
+    interestRate: loan.interestRate,
+    monthlyMinimumPayment: loan.monthlyMinimumPayment,
+  };
 };
 
 const mapDispatchToProps = {
