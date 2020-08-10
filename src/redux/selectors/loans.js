@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 import { getDebtPayoffSortFunction } from "./userPreferences";
-import { get } from "lodash";
+import { get, isNull } from "lodash";
 
 const initalPayoffDetails = {
   payments: [],
@@ -273,6 +273,6 @@ export const getLoan = createSelector(
 );
 
 export const getPaymentPlan = createSelector(
-  [(state) => state.loans.allLoans, () => 1900, getDebtPayoffSortFunction],
+  [(state) => state.loans.allLoans, () => null, getDebtPayoffSortFunction],
   generatePaymentPlan
 );
