@@ -104,7 +104,7 @@ output
 [
     {
         <loan1-id>: {
-            balanceBeforePayment: 0, // but after growth
+            balance: 0, // but after growth
             paymentAmount: 0
         }
     }
@@ -148,17 +148,16 @@ const generatePaymentPlan = (
     const paymentsThisMonthWithoutAdditionalPayments = [...sortedLoans]
       .reverse()
       .reduce((acc, loan) => {
-        const balanceBeforePayment =
+        const balance =
           payments.length > 0
-            ? payments[payments.length - 1][loan.id].balanceBeforePayment
+            ? payments[payments.length - 1][loan.id].balance
             : loan.balance;
         const lastPayment =
           payments.length > 0
             ? payments[payments.length - 1][loan.id].payment
             : 0;
         const capitalizedBalance =
-          (balanceBeforePayment - lastPayment) *
-          (1 + loan.interestRate / 100 / 12.0);
+          (balance - lastPayment) * (1 + loan.interestRate / 100 / 12.0);
         let payment = 0;
         if (capitalizedBalance > 0) {
           if (capitalizedBalance <= getMonthlyMinimumPayment(loan.id)) {
@@ -173,7 +172,7 @@ const generatePaymentPlan = (
           ...acc,
           [loan.id]: {
             id: loan.id,
-            balanceBeforePayment: capitalizedBalance,
+            balance: capitalizedBalance,
             payment: payment,
             interestRate: loan.interestRate,
           },
@@ -188,13 +187,10 @@ const generatePaymentPlan = (
       const updatedLoanPayments = Object.values(
         paymentsThisMonthWithoutAdditionalPayments
       )
-        .map((loan) => ({ ...loan, balance: loan.balanceBeforePayment }))
-        .filter(
-          (loan) => (loan.balanceBeforePayment - loan.payment).toFixed(2) > 0
-        )
+        .filter((loan) => (loan.balance - loan.payment).toFixed(2) > 0)
         .sort(sortFunction)
         .map((loan) => {
-          const remainingBalance = loan.balanceBeforePayment - loan.payment;
+          const remainingBalance = loan.balance - loan.payment;
 
           if (remainingBalance.toFixed(2) > 0) {
             let newPayment;
@@ -238,9 +234,7 @@ const generatePaymentPlan = (
 
     payments.push(payment);
     balance = Object.keys(payment).reduce((acc, loanId) => {
-      return (
-        acc + payment[loanId].balanceBeforePayment - payment[loanId].payment
-      );
+      return acc + payment[loanId].balance - payment[loanId].payment;
     }, 0);
     currentMonth++;
     if (currentMonth > MAX_MONTHS) {
