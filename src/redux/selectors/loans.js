@@ -270,3 +270,36 @@ export const getPaymentPlan = createSelector(
   [(state) => state.loans.allLoans, () => null, getDebtPayoffSortFunction],
   generatePaymentPlan
 );
+
+export const getTotalPrincipal = createSelector(
+  [(state) => state.loans.allLoans],
+  (loans) =>
+    loans.reduce((acc, curr) => {
+      return acc + curr.balance;
+    }, 0)
+);
+
+export const getTotalMonthlyPayment = createSelector(
+  [(state) => state.loans.allLoans],
+  (loans) =>
+    loans.reduce((acc, curr) => {
+      return acc + curr.monthlyMinimumPayment;
+    }, 0)
+);
+
+export const getMonthsAwayFromPayoff = createSelector(
+  [getPaymentPlan],
+  (paymentPlan) => paymentPlan.length
+);
+export const getTotalInterestPaid = createSelector(
+  [getPaymentPlan],
+  (paymentPlan) =>
+    paymentPlan.reduce((acc, curr) => {
+      return (
+        acc +
+        Object.values(curr).reduce((monthsPayment, currentLoanPayment) => {
+          return monthsPayment + currentLoanPayment.payment;
+        }, 0)
+      );
+    }, 0)
+);

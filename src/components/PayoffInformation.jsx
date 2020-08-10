@@ -59,27 +59,11 @@ PayoffInformation.defaultProps = {
 };
 
 const mapStateToProps = (state) => {
-  const payoffDetails = selectors.originalPayoffDetails(state);
-  const reducedLoans = state.loans.allLoans.reduce(
-    (acc, curr) => {
-      return {
-        ...acc,
-        totalPrincipal: acc.totalPrincipal + curr.balance,
-        totalMonthlyPayment:
-          acc.totalMonthlyPayment + curr.monthlyMinimumPayment,
-      };
-    },
-    { totalPrincipal: 0, totalMonthlyPayment: 0 }
-  );
   return {
-    monthsAwayFromPayoff: Math.max(
-      ...payoffDetails.payments.map(
-        (loanPayments) => loanPayments.payments.length
-      )
-    ),
-    totalInterest: payoffDetails.totalInterest,
-    principal: reducedLoans.totalPrincipal,
-    monthlyPayment: reducedLoans.totalMonthlyPayment,
+    monthsAwayFromPayoff: selectors.getMonthsAwayFromPayoff(state),
+    totalInterest: selectors.getTotalInterestPaid(state),
+    principal: selectors.getTotalPrincipal(state),
+    monthlyPayment: selectors.getTotalMonthlyPayment(state),
   };
 };
 
