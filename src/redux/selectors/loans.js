@@ -1,6 +1,5 @@
 import { createSelector } from "reselect";
 import { getDebtPayoffSortFunction } from "./userPreferences";
-import { get, isNull } from "lodash";
 
 const initalPayoffDetails = {
   payments: [],
