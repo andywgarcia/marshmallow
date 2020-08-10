@@ -22,6 +22,7 @@ const TotalCost = ({ interestSaved, monthsSooner }) => {
 const mapStateToProps = (state) => {
   const payoffDetails = selectors.originalPayoffDetails(state);
   const payoffSavingsDetails = selectors.payoffSavingsDetails(state);
+  console.log(selectors.getPaymentPlan(state));
   const originalMonthsPayoff = Math.max(
     ...payoffDetails.payments.map(
       (loanPayments) => loanPayments.payments.length
