@@ -1,7 +1,16 @@
 import React from "react";
 import { connect } from "react-redux";
 import * as selectors from "../redux/selectors";
-import { TextField, Typography } from "@material-ui/core";
+import { setAvailableLoanPaymentAmount } from "../redux/actionCreators";
+import {
+  TextField,
+  Typography,
+  InputAdornment,
+  IconButton,
+} from "@material-ui/core";
+import ClearIcon from "@material-ui/icons/Clear";
+import moment from "moment";
+
 const PayoffInformation = (props) => {
   return (
     <div>
@@ -30,6 +39,18 @@ const PayoffInformation = (props) => {
       </div>
       <div>
         <TextField
+          id="payoff-date"
+          label="Payoff Date"
+          variant="filled"
+          disabled
+          margin="normal"
+          value={moment()
+            .add(props.monthsAwayFromPayoff, "months")
+            .format("MMMM YYYY")}
+        />
+      </div>
+      <div>
+        <TextField
           id="payoff-months-away"
           label="Months Away from Payoff"
           variant="filled"
@@ -43,9 +64,41 @@ const PayoffInformation = (props) => {
           id="total-monthly-payment"
           label="Monthly Payment"
           variant="filled"
-          disabled
           margin="normal"
           value={props.monthlyPayment}
+          onChange={({ target: { value } }) => {
+            props.setAvailableLoanPaymentAmount(value);
+          }}
+          onBlur={() => {
+            props.setAvailableLoanPaymentAmount(
+              parseFloat(props.monthlyPayment || 0)
+            );
+          }}
+          error={props.monthlyPayment < props.monthlyMinPayment}
+          helperText={
+            props.monthlyPayment < props.monthlyMinPayment
+              ? `The monthly payment amount must be at least $${parseFloat(
+                  props.monthlyMinPayment || 0
+                ).toFixed(2)}`
+              : ""
+          }
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="Reset Monthly Payment"
+                  onClick={() => {
+                    props.setAvailableLoanPaymentAmount(
+                      parseFloat(props.monthlyMinPayment || 0)
+                    );
+                  }}
+                  // onMouseDown={handleMouseDownPassword}
+                >
+                  <ClearIcon fontSize="small" />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
       </div>
     </div>
@@ -63,8 +116,11 @@ const mapStateToProps = (state) => {
     monthsAwayFromPayoff: selectors.getMonthsAwayFromPayoff(state),
     totalInterest: selectors.getTotalInterestPaid(state),
     principal: selectors.getTotalPrincipal(state),
-    monthlyPayment: selectors.getTotalMonthlyPayment(state),
+    monthlyMinPayment: selectors.getTotalMonthlyMinPayment(state),
+    monthlyPayment: state.availableAmounts.forLoanPayments,
   };
 };
 
-export default connect(mapStateToProps)(PayoffInformation);
+export default connect(mapStateToProps, { setAvailableLoanPaymentAmount })(
+  PayoffInformation
+);

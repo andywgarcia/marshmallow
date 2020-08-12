@@ -18,10 +18,16 @@ function AddLoanForm(props) {
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}
           value={props.balance}
-          onChange={({ target: { value } }) =>
+          onChange={({ target: { value } }) => {
             props.updateLoan({
               id: props.loanId,
-              balance: parseFloat(value || 0),
+              balance: value,
+            });
+          }}
+          onBlur={() =>
+            props.updateLoan({
+              id: props.loanId,
+              balance: parseFloat(props.balance || 0),
             })
           }
         />
@@ -39,7 +45,13 @@ function AddLoanForm(props) {
           onChange={({ target: { value } }) =>
             props.updateLoan({
               id: props.loanId,
-              interestRate: parseFloat(value || 0),
+              interestRate: value,
+            })
+          }
+          onBlur={() =>
+            props.updateLoan({
+              id: props.loanId,
+              interestRate: parseFloat(props.interestRate || 0),
             })
           }
         />
@@ -53,11 +65,19 @@ function AddLoanForm(props) {
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}
-          value={props.monthlyMinimumPayment}
+          value={props.monthlyMinimumPayment || 0}
           onChange={({ target: { value } }) =>
             props.updateLoan({
               id: props.loanId,
-              monthlyMinimumPayment: parseFloat(value || 0),
+              monthlyMinimumPayment: value,
+            })
+          }
+          onBlur={() =>
+            props.updateLoan({
+              id: props.loanId,
+              monthlyMinimumPayment: parseFloat(
+                props.monthlyMinimumPayment || 0
+              ),
             })
           }
         />

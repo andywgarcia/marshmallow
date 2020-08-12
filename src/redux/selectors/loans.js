@@ -117,18 +117,6 @@ const generatePaymentPlan = (
   totalMonthlyPayment,
   debtSortFunction = () => 0
 ) => {
-  const totalMonthlyMinimumPayments = loans.reduce(
-    (acc, curr) => curr.monthlyMinimumPayment + acc,
-    0
-  );
-
-  if (
-    totalMonthlyPayment === null ||
-    totalMonthlyPayment < totalMonthlyMinimumPayments
-  ) {
-    totalMonthlyPayment = totalMonthlyMinimumPayments;
-  }
-
   const MAX_MONTHS = 12 * 30;
   let currentMonth = 0;
   let payments = [];
@@ -265,8 +253,34 @@ export const getLoan = createSelector(
   (loan) => loan
 );
 
+export const getTotalMonthlyMinPayment = createSelector(
+  [(state) => state.loans.allLoans],
+  (loans, manualAmount) =>
+    loans.reduce((acc, curr) => {
+      return acc + curr.monthlyMinimumPayment;
+    }, 0)
+);
+
+export const getTotalMonthlyPayment = createSelector(
+  [
+    (state) => state.loans.allLoans,
+    (state) => state.availableAmounts.forLoanPayments,
+  ],
+  (loans, manualAmount) =>
+    Math.max(
+      loans.reduce((acc, curr) => {
+        return acc + curr.monthlyMinimumPayment;
+      }, 0),
+      manualAmount || 0
+    )
+);
+
 export const getPaymentPlan = createSelector(
-  [(state) => state.loans.allLoans, () => null, getDebtPayoffSortFunction],
+  [
+    (state) => state.loans.allLoans,
+    getTotalMonthlyPayment,
+    getDebtPayoffSortFunction,
+  ],
   generatePaymentPlan
 );
 
@@ -275,14 +289,6 @@ export const getTotalPrincipal = createSelector(
   (loans) =>
     loans.reduce((acc, curr) => {
       return acc + curr.balance;
-    }, 0)
-);
-
-export const getTotalMonthlyPayment = createSelector(
-  [(state) => state.loans.allLoans],
-  (loans) =>
-    loans.reduce((acc, curr) => {
-      return acc + curr.monthlyMinimumPayment;
     }, 0)
 );
 

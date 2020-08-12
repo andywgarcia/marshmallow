@@ -12,6 +12,8 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import MomentUtils from "@date-io/moment";
 
 import store from "./redux/store";
 
@@ -64,40 +66,42 @@ function App() {
   return (
     <React.Fragment>
       <Provider store={store}>
-        <div className={classes.root}>
-          <CssBaseline />
-          <AppBar position="fixed" className={classes.appBar}>
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                className={classes.menuButton}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap>
-                Marshmallow
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <LeftDrawer
-            classes={classes}
-            handleDrawerToggle={handleDrawerToggle}
-            theme={theme}
-            isMobileOpen={mobileOpen}
-          />
-          <Container maxWidth="xs" className={`App ${classes.Root} `}>
-            <main className={classes.content}>
-              <div className={classes.toolbar} />
-              <Router>
-                <LoanCalculator path="/" />
-                <EditLoan path="/loan/:loanId" />
-              </Router>
-            </main>
-          </Container>
-        </div>
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+          <div className={classes.root}>
+            <CssBaseline />
+            <AppBar position="fixed" className={classes.appBar}>
+              <Toolbar>
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  edge="start"
+                  onClick={handleDrawerToggle}
+                  className={classes.menuButton}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" noWrap>
+                  Marshmallow
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <LeftDrawer
+              classes={classes}
+              handleDrawerToggle={handleDrawerToggle}
+              theme={theme}
+              isMobileOpen={mobileOpen}
+            />
+            <Container maxWidth="xs" className={`App ${classes.Root} `}>
+              <main className={classes.content}>
+                <div className={classes.toolbar} />
+                <Router>
+                  <LoanCalculator path="/" />
+                  <EditLoan path="/loan/:loanId" />
+                </Router>
+              </main>
+            </Container>
+          </div>
+        </MuiPickersUtilsProvider>
       </Provider>
     </React.Fragment>
   );
