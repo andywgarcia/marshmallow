@@ -297,8 +297,8 @@ export const getMonthsAwayFromPayoff = createSelector(
   (paymentPlan) => paymentPlan.length
 );
 export const getTotalInterestPaid = createSelector(
-  [getPaymentPlan],
-  (paymentPlan) =>
+  [getPaymentPlan, getTotalPrincipal],
+  (paymentPlan, totalPrincipal) =>
     paymentPlan.reduce((acc, curr) => {
       return (
         acc +
@@ -306,5 +306,5 @@ export const getTotalInterestPaid = createSelector(
           return monthsPayment + currentLoanPayment.payment;
         }, 0)
       );
-    }, 0)
+    }, 0) - totalPrincipal
 );

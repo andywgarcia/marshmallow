@@ -29,6 +29,16 @@ const PayoffInformation = (props) => {
       </div>
       <div>
         <TextField
+          id="payoff-total-principal"
+          label="Total Principal"
+          variant="filled"
+          disabled
+          margin="normal"
+          value={props.principal.toFixed(2)}
+        />
+      </div>
+      <div>
+        <TextField
           id="payoff-interest-paid"
           label="Interest Paid"
           variant="filled"
