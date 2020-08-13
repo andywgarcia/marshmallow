@@ -20,23 +20,15 @@ const TotalCost = ({ interestSaved, monthsSooner }) => {
 };
 
 const mapStateToProps = (state) => {
-  const payoffDetails = selectors.originalPayoffDetails(state);
-  const payoffSavingsDetails = selectors.payoffSavingsDetails(state);
-  console.log(selectors.getPaymentPlan(state));
-  const originalMonthsPayoff = Math.max(
-    ...payoffDetails.payments.map(
-      (loanPayments) => loanPayments.payments.length
-    )
-  );
-  const savedMonthsPayoff = Math.max(
-    ...payoffSavingsDetails.payments.map(
-      (loanPayments) => loanPayments.payments.length
-    )
+  const originalTotalPaid = selectors.getOriginalTotalPaid(state);
+  const potentialTotalPaid = selectors.getPotentialTotalPaid(state);
+  const originalPaymentPlan = selectors.getPaymentPlan(state);
+  const potentialPaymentPlan = selectors.getPaymentPlanWithAdditionalSpending(
+    state
   );
   return {
-    interestSaved:
-      payoffDetails.totalInterest - payoffSavingsDetails.totalInterest,
-    monthsSooner: originalMonthsPayoff - savedMonthsPayoff,
+    interestSaved: originalTotalPaid - potentialTotalPaid,
+    monthsSooner: originalPaymentPlan.length - potentialPaymentPlan.length,
   };
 };
 

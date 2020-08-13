@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { setDesiredSpending } from "../redux/actionCreators";
+import {
+  setDesiredSpending,
+  setDesiredLoanSpendingDate,
+} from "../redux/actionCreators";
 import { TextField, Typography } from "@material-ui/core";
 
 import { KeyboardDatePicker } from "@material-ui/pickers";
 
 import moment from "moment";
 
-const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
-  const [date, setDate] = useState(moment());
+const Amount = (props) => {
   return (
     <div>
       <Typography variant="h6" color="initial">
@@ -20,8 +22,8 @@ const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
           label="One Time Extra Payment"
           margin="normal"
           variant="outlined"
-          value={desiredSpendingAmount}
-          onChange={({ target: { value } }) => setDesiredSpending(value)}
+          value={props.desiredSpendingAmount}
+          onChange={({ target: { value } }) => props.setDesiredSpending(value)}
         />
         <Typography variant="h6" color="initial">
           on
@@ -33,8 +35,8 @@ const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
           id="amount-input"
           label="Date"
           inputVariant="outlined"
-          value={date}
-          onChange={setDate}
+          value={props.desiredSpendingDate || moment()}
+          onChange={props.setDesiredLoanSpendingDate}
           KeyboardButtonProps={{
             "aria-label": "change date",
           }}
@@ -47,10 +49,12 @@ const Amount = ({ desiredSpendingAmount, setDesiredSpending }) => {
 const mapStateToProps = (state) => {
   return {
     desiredSpendingAmount: state.availableAmounts.desiredSpending,
+    desiredSpendingDate: state.availableAmounts.date,
   };
 };
 
 const mapDispatchToProps = {
   setDesiredSpending,
+  setDesiredLoanSpendingDate,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Amount);

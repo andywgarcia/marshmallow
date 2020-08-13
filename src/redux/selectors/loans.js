@@ -1,5 +1,8 @@
 import { createSelector } from "reselect";
 import { getDebtPayoffSortFunction } from "./userPreferences";
+import { getSpendingHistory } from "./spending";
+import moment from "moment";
+import { create } from "lodash";
 
 const initalPayoffDetails = {
   payments: [],
@@ -98,7 +101,10 @@ input
 ],
 totalMonthlyPayment: 0 | null --> If null, use sum of all monthly minimum payments. If less than sum of all monthly minimum payments, use sum of all monthly minimum payments
 debtSortFunction: () => 0 //default to no sorting
-
+additionalPayments: 
+{
+  <date, monthyear>: 0
+}
 output
 [
     {
@@ -115,10 +121,12 @@ output
 const generatePaymentPlan = (
   loans,
   totalMonthlyPayment,
-  debtSortFunction = () => 0
+  debtSortFunction = () => 0,
+  additionalPayments = {}
 ) => {
   const MAX_MONTHS = 12 * 30;
   let currentMonth = 0;
+  let currentDate = moment.now();
   let payments = [];
   const sortedLoans = [...loans].sort(debtSortFunction);
 
@@ -210,7 +218,10 @@ const generatePaymentPlan = (
     const [newPayment, leftover] = getPaymentsThisMonthWithExtraPayments(
       paymentsThisMonthWithoutAdditionalPayments,
       debtSortFunction,
-      currentMonthAllowedPaymentAmount
+      currentMonthAllowedPaymentAmount +
+        (additionalPayments[
+          moment(currentDate).add(currentMonth, "M").format("MM-YYYY")
+        ] || 0)
     );
 
     currentMonthAllowedPaymentAmount = leftover;
@@ -255,7 +266,7 @@ export const getLoan = createSelector(
 
 export const getTotalMonthlyMinPayment = createSelector(
   [(state) => state.loans.allLoans],
-  (loans, manualAmount) =>
+  (loans) =>
     loans.reduce((acc, curr) => {
       return acc + curr.monthlyMinimumPayment;
     }, 0)
@@ -284,6 +295,16 @@ export const getPaymentPlan = createSelector(
   generatePaymentPlan
 );
 
+export const getPaymentPlanWithAdditionalSpending = createSelector(
+  [
+    (state) => state.loans.allLoans,
+    getTotalMonthlyPayment,
+    getDebtPayoffSortFunction,
+    getSpendingHistory,
+  ],
+  generatePaymentPlan
+);
+
 export const getTotalPrincipal = createSelector(
   [(state) => state.loans.allLoans],
   (loans) =>
@@ -296,15 +317,27 @@ export const getMonthsAwayFromPayoff = createSelector(
   [getPaymentPlan],
   (paymentPlan) => paymentPlan.length
 );
+
+const getTotalPaidForPaymentPlan = (paymentPlan) =>
+  paymentPlan.reduce((acc, curr) => {
+    return (
+      acc +
+      Object.values(curr).reduce((monthsPayment, currentLoanPayment) => {
+        return monthsPayment + currentLoanPayment.payment;
+      }, 0)
+    );
+  }, 0);
+
+export const getOriginalTotalPaid = createSelector(
+  [getPaymentPlan],
+  getTotalPaidForPaymentPlan
+);
 export const getTotalInterestPaid = createSelector(
-  [getPaymentPlan, getTotalPrincipal],
-  (paymentPlan, totalPrincipal) =>
-    paymentPlan.reduce((acc, curr) => {
-      return (
-        acc +
-        Object.values(curr).reduce((monthsPayment, currentLoanPayment) => {
-          return monthsPayment + currentLoanPayment.payment;
-        }, 0)
-      );
-    }, 0) - totalPrincipal
+  [getOriginalTotalPaid, getTotalPrincipal],
+  (totalPaid, totalPrincipal) => totalPaid - totalPrincipal
+);
+
+export const getPotentialTotalPaid = createSelector(
+  [getPaymentPlanWithAdditionalSpending],
+  getTotalPaidForPaymentPlan
 );

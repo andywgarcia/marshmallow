@@ -16,3 +16,7 @@ export const addLoan = createAction(Actions.ADD_LOAN);
 export const setAvailableLoanPaymentAmount = createAction(
   Actions.SET_AVAILABLE_LOAN_PAYMENT_AMOUNT
 );
+
+export const setDesiredLoanSpendingDate = createAction(
+  Actions.SET_DESIRED_SPENDING_DATE
+);
