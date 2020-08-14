@@ -8,8 +8,10 @@ const TotalCost = ({ interestSaved, monthsSooner }) => {
     <div>
       <Typography variant="h6" color="initial">
         would save you{" "}
-        <span style={{ color: "green" }}>${interestSaved.toFixed(2)}</span> in
-        interest
+        <span style={{ color: "green" }}>
+          ${(interestSaved || 0).toFixed(2)}
+        </span>{" "}
+        in interest
       </Typography>
       <Typography variant="h6" color="initial">
         and be paid off{" "}
