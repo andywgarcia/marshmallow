@@ -18,6 +18,7 @@ import MomentUtils from "@date-io/moment";
 import store from "./redux/store";
 
 import "./App.css";
+import LoanOverview from "./pages/LoanOverview";
 
 const drawerWidth = 240;
 
@@ -97,6 +98,7 @@ function App() {
                 <Router>
                   <LoanCalculator path="/" />
                   <EditLoan path="/loan/:loanId" />
+                  <LoanOverview path="/loans" />
                 </Router>
               </main>
             </Container>

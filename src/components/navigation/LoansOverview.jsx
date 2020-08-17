@@ -7,6 +7,14 @@ import FolderIcon from "@material-ui/icons/Folder";
 const LoansOverview = (props) => {
   return (
     <List>
+      <Link to={"/loans"}>
+        <ListItem button>
+          <ListItemIcon>
+            <FolderIcon />
+          </ListItemIcon>
+          <ListItemText primary="Loans Overview" />
+        </ListItem>
+      </Link>
       {props.allLoans.map((loan, index) => (
         <Link to={`/loan/${loan.id}`} key={`loan-overview-${loan.id}`}>
           <ListItem button>
