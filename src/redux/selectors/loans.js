@@ -3,6 +3,16 @@ import { getDebtPayoffSortFunction } from "./userPreferences";
 import { getSpendingHistory } from "./spending";
 import moment from "moment";
 
+const getExtraPaymentAmountInMonth = (additionalPayments, month) => {
+  console.log(additionalPayments);
+  additionalPayments.reduce((acc, curr) => {
+    if (moment(curr.date).isSame(month, "month")) {
+      return acc + curr.amount;
+    }
+  }, 0);
+  return 0;
+};
+
 /*
 input
 [
@@ -14,16 +24,22 @@ input
     }
 ],
 totalMonthlyPayment: 0 | null --> If null, use sum of all monthly minimum payments. If less than sum of all monthly minimum payments, use sum of all monthly minimum payments
-debtSortFunction: () => 0 //default to no sorting
+debtSortFunction: () => 0 //default to no sorting, maybe this should just be the debt repayment method?
 additionalPayments: 
-{
-  <date, monthyear>: 0
-}
+[
+  {
+    id: guid,
+    date: "date-time",
+    amount: 0
+  }
+]
+
+
 output
 [
     {
         <loan1-id>: {
-            balance: 0, // but after growth
+            balance: 0, // after growth, before payment
             paymentAmount: 0
         }
     }
@@ -36,7 +52,7 @@ const generatePaymentPlan = (
   loans,
   totalMonthlyPayment,
   debtSortFunction = () => 0,
-  additionalPayments = {}
+  additionalPayments = [] // I switched additional payments to an array, which it needs to be, but now I need to update the input side of things
 ) => {
   const MAX_MONTHS = 12 * 30;
   let currentMonth = 0;
@@ -88,7 +104,7 @@ const generatePaymentPlan = (
         };
       }, {});
 
-    const getPaymentsThisMonthWithExtraPayments = (
+    const getPaymentsThisMonthWithExtraMonthlyPayments = (
       paymentsThisMonthWithoutAdditionalPayments,
       sortFunction,
       extraPaymentAmount
@@ -129,13 +145,14 @@ const generatePaymentPlan = (
       return [updatedLoanPayments, extraPaymentAmount];
     };
 
-    const [newPayment, leftover] = getPaymentsThisMonthWithExtraPayments(
+    const [newPayment, leftover] = getPaymentsThisMonthWithExtraMonthlyPayments(
       paymentsThisMonthWithoutAdditionalPayments,
       debtSortFunction,
       currentMonthAllowedPaymentAmount +
-        (additionalPayments[
-          moment(currentDate).add(currentMonth, "M").format("MM-YYYY")
-        ] || 0)
+        getExtraPaymentAmountInMonth(
+          additionalPayments,
+          moment(currentDate).add(currentMonth, "M")
+        )
     );
 
     currentMonthAllowedPaymentAmount = leftover;
