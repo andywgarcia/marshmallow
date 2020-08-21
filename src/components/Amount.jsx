@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import {
-  setDesiredSpendingAmount,
   setDesiredLoanSpendingDate,
   setDesiredSpending,
 } from "../redux/actionCreators";
@@ -68,7 +67,6 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-  setDesiredSpendingAmount,
   setDesiredLoanSpendingDate,
   setDesiredSpending,
 };

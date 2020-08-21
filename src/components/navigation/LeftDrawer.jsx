@@ -14,13 +14,27 @@ import { v4 as uuidv4 } from "uuid";
 import { connect } from "react-redux";
 import { addLoan } from "../../redux/actionCreators";
 import LoansOverview from "./LoansOverview";
+import * as selectors from "../../redux/selectors";
+
+import { Typography } from "@material-ui/core";
 
 function LeftDrawer(props) {
   const { window } = props;
   const [id, createNewId] = useState(uuidv4());
   const drawer = (
     <div>
-      <div className={props.classes.toolbar} />
+      <div
+        className={props.classes.toolbar}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h5" style={{ color: "green" }}>
+          ${(props.interestSaved || 0).toFixed(2)} saved
+        </Typography>
+      </div>
       <Divider />
       <List>
         <Link to="/">
@@ -89,7 +103,20 @@ function LeftDrawer(props) {
   );
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => {
+  const originalTotalPaid = selectors.getOriginalTotalPaid(state);
+  const totalPaidAfterAdditionalPayments = selectors.getTotalPaidWithExtraPayments(
+    state
+  );
+  const originalPaymentPlan = selectors.getPaymentPlan(state);
+  const additionalPaymentsPlan = selectors.getPaymentPlanWithAdditionalPayments(
+    state
+  );
+  return {
+    interestSaved: originalTotalPaid - totalPaidAfterAdditionalPayments,
+    monthsSooner: originalPaymentPlan.length - additionalPaymentsPlan.length,
+  };
+};
 const mapDispatchToProps = {
   addLoan,
 };

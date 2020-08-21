@@ -3,8 +3,6 @@ import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  desiredSpendingAmount: 0,
-  date: moment.now(),
   desiredSpending: {
     id: uuidv4(),
     date: moment.now(),
@@ -16,11 +14,6 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case Actions.SET_DESIRED_SPENDING_AMOUNT:
-      return {
-        ...state,
-        desiredSpendingAmount: action.payload,
-      };
     case Actions.SET_DESIRED_SPENDING:
       return {
         ...state,
@@ -33,11 +26,6 @@ export default (state = initialState, action) => {
       return {
         ...state,
         monthlyPayment: action.payload,
-      };
-    case Actions.SET_DESIRED_SPENDING_DATE:
-      return {
-        ...state,
-        date: action.payload,
       };
     case Actions.ADD_EXTRA_PAYMENT:
       return {

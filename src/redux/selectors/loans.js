@@ -213,7 +213,17 @@ export const getPaymentPlan = createSelector(
   generatePaymentPlan
 );
 
-export const getPaymentPlanWithAdditionalSpending = createSelector(
+export const getPaymentPlanWithAdditionalPayments = createSelector(
+  [
+    (state) => state.loans.allLoans,
+    getTotalMonthlyPayment,
+    getDebtPayoffSortFunction,
+    (state) => state.availableAmounts.extraPayments || [],
+  ],
+  generatePaymentPlan
+);
+
+export const getPaymentPlanWithAdditionalDesiredSpending = createSelector(
   [
     (state) => state.loans.allLoans,
     getTotalMonthlyPayment,
@@ -258,7 +268,12 @@ export const getTotalInterestPaid = createSelector(
   (totalPaid, totalPrincipal) => totalPaid - totalPrincipal
 );
 
+export const getTotalPaidWithExtraPayments = createSelector(
+  [getPaymentPlanWithAdditionalPayments],
+  getTotalPaidForPaymentPlan
+);
+
 export const getPotentialTotalPaid = createSelector(
-  [getPaymentPlanWithAdditionalSpending],
+  [getPaymentPlanWithAdditionalDesiredSpending],
   getTotalPaidForPaymentPlan
 );
