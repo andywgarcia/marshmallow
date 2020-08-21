@@ -1,16 +1,17 @@
 import { createSelector } from "reselect";
 import { getDebtPayoffSortFunction } from "./userPreferences";
-import { getSpendingHistory } from "./spending";
 import moment from "moment";
 
 const getExtraPaymentAmountInMonth = (additionalPayments, month) => {
-  console.log(additionalPayments);
-  additionalPayments.reduce((acc, curr) => {
+  // console.log(additionalPayments);
+  return additionalPayments.reduce((acc, curr) => {
     if (moment(curr.date).isSame(month, "month")) {
       return acc + curr.amount;
     }
+    return acc;
   }, 0);
-  return 0;
+  // console.log(`Extra payment in month of ${moment().add(month, 'M').format('MM YYYY')} is ${}`)
+  // return 0;
 };
 
 /*
@@ -192,7 +193,7 @@ export const getTotalMonthlyMinPayment = createSelector(
 export const getTotalMonthlyPayment = createSelector(
   [
     (state) => state.loans.allLoans,
-    (state) => state.availableAmounts.forLoanPayments,
+    (state) => state.availableAmounts.monthlyPayment,
   ],
   (loans, manualAmount) =>
     Math.max(
@@ -217,7 +218,10 @@ export const getPaymentPlanWithAdditionalSpending = createSelector(
     (state) => state.loans.allLoans,
     getTotalMonthlyPayment,
     getDebtPayoffSortFunction,
-    getSpendingHistory,
+    (state) => [
+      state.availableAmounts.desiredSpending,
+      ...(state.availableAmounts.extraPayments || []),
+    ],
   ],
   generatePaymentPlan
 );

@@ -127,7 +127,7 @@ const mapStateToProps = (state) => {
     totalInterest: selectors.getTotalInterestPaid(state),
     principal: selectors.getTotalPrincipal(state),
     monthlyMinPayment: selectors.getTotalMonthlyMinPayment(state),
-    monthlyPayment: state.availableAmounts.forLoanPayments,
+    monthlyPayment: state.availableAmounts.monthlyPayment,
   };
 };
 

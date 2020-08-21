@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import {
-  setDesiredSpending,
+  setDesiredSpendingAmount,
   setDesiredLoanSpendingDate,
+  setDesiredSpending,
 } from "../redux/actionCreators";
 import { TextField, Typography } from "@material-ui/core";
 
@@ -11,7 +12,7 @@ import { KeyboardDatePicker } from "@material-ui/pickers";
 import moment from "moment";
 
 const Amount = (props) => {
-  const [desiredSpending, setDesiredSpending] = useState(
+  const [desiredSpendingAmount, setDesiredSpendingAmount] = useState(
     props.desiredSpendingAmount
   );
 
@@ -29,11 +30,13 @@ const Amount = (props) => {
           label="One Time Extra Payment"
           margin="normal"
           variant="outlined"
-          value={desiredSpending}
-          onChange={({ target: { value } }) => setDesiredSpending(value)}
+          value={desiredSpendingAmount}
+          onChange={({ target: { value } }) => setDesiredSpendingAmount(value)}
           onBlur={() => {
-            props.setDesiredSpending(cleanNumber(desiredSpending));
-            setDesiredSpending(cleanNumber(desiredSpending));
+            props.setDesiredSpending({
+              amount: cleanNumber(desiredSpendingAmount),
+            });
+            setDesiredSpendingAmount(cleanNumber(desiredSpendingAmount));
           }}
         />
         <Typography variant="h6" color="initial">
@@ -47,7 +50,7 @@ const Amount = (props) => {
           label="Date"
           inputVariant="outlined"
           value={props.desiredSpendingDate || moment()}
-          onChange={props.setDesiredLoanSpendingDate}
+          onChange={(date) => props.setDesiredSpending({ date: date })}
           KeyboardButtonProps={{
             "aria-label": "change date",
           }}
@@ -59,13 +62,14 @@ const Amount = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    desiredSpendingAmount: state.availableAmounts.desiredSpending,
-    desiredSpendingDate: state.availableAmounts.date,
+    desiredSpendingAmount: state.availableAmounts.desiredSpending.amount,
+    desiredSpendingDate: state.availableAmounts.desiredSpending.date,
   };
 };
 
 const mapDispatchToProps = {
-  setDesiredSpending,
+  setDesiredSpendingAmount,
   setDesiredLoanSpendingDate,
+  setDesiredSpending,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Amount);

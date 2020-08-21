@@ -5,7 +5,13 @@ export const setLoanInfo = createAction(Actions.SET_LOAN_INFO);
 
 export const updateLoan = createAction(Actions.UPDATE_LOAN);
 
+export const setDesiredSpendingAmount = createAction(
+  Actions.SET_DESIRED_SPENDING_AMOUNT
+);
+
 export const setDesiredSpending = createAction(Actions.SET_DESIRED_SPENDING);
+
+export const addExtraPayment = createAction(Actions.ADD_EXTRA_PAYMENT);
 
 export const addLoan = createAction(Actions.ADD_LOAN);
 export const setAvailableLoanPaymentAmount = createAction(
