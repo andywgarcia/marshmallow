@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
-import {
-  setDesiredLoanSpendingDate,
-  setDesiredSpending,
-} from "../redux/actionCreators";
+import { setDesiredSpending } from "../redux/actionCreators";
 import { TextField, Typography } from "@material-ui/core";
 
 import { KeyboardDatePicker } from "@material-ui/pickers";
@@ -64,7 +61,6 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-  setDesiredLoanSpendingDate,
   setDesiredSpending,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Amount);
