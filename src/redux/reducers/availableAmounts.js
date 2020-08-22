@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 const initialState = {
   desiredSpending: {
     id: uuidv4(),
-    date: moment.now(),
+    date: moment(),
     amount: 0,
   },
   monthlyPayment: 0,
@@ -32,7 +32,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         desiredSpending: {
-          date: moment.now(),
+          date: moment(),
           amount: 0,
         },
         extraPayments: [
@@ -44,7 +44,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         desiredSpending: {
-          date: moment.now(),
+          date: moment,
           amount: 0,
         },
         extraSpending: [

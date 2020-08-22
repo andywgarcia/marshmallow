@@ -57,7 +57,7 @@ const generatePaymentPlan = (
 ) => {
   const MAX_MONTHS = 12 * 30;
   let currentMonth = 0;
-  let currentDate = moment.now();
+  let currentDate = moment();
   let payments = [];
   const sortedLoans = [...loans].sort(debtSortFunction);
 

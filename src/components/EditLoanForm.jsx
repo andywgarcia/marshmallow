@@ -10,8 +10,10 @@ import {
   DialogContent,
   DialogContentText,
 } from "@material-ui/core";
+import { KeyboardDatePicker } from "@material-ui/pickers";
 import { getLoan } from "../redux/selectors";
 import { Link } from "@reach/router";
+import moment from "moment";
 
 function AddLoanForm(props) {
   const [open, setOpen] = React.useState(false);
@@ -27,8 +29,8 @@ function AddLoanForm(props) {
       <h1>Loan Information</h1>
       <div>
         <TextField
-          id="loan-current-balance-input"
-          label="Current Balance"
+          id="loan-balance-input"
+          label="Balance"
           variant="outlined"
           margin="normal"
           InputProps={{
@@ -47,6 +49,23 @@ function AddLoanForm(props) {
               balance: parseFloat(props.balance || 0),
             })
           }
+        />
+      </div>
+      <div>
+        <KeyboardDatePicker
+          disableToolbar
+          format="MMMM Do, YYYY"
+          margin="normal"
+          id="loan-date"
+          label="Date"
+          inputVariant="outlined"
+          value={props.date || moment()}
+          onChange={(date) =>
+            props.updateLoan({ id: props.loanId, date: date })
+          }
+          KeyboardButtonProps={{
+            "aria-label": "change date",
+          }}
         />
       </div>
       <div>
@@ -142,6 +161,7 @@ const mapStateToProps = (state, ownProps) => {
     balance: loan?.balance,
     interestRate: loan?.interestRate,
     monthlyMinimumPayment: loan?.monthlyMinimumPayment,
+    date: loan?.date,
   };
 };
 

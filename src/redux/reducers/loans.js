@@ -1,4 +1,5 @@
 import * as Actions from "../actions";
+import moment from "moment";
 
 const initialState = {
   allLoans: [],
@@ -9,6 +10,7 @@ const newLoan = {
   balance: 0,
   interestRate: 0,
   monthlyMinimumPayment: 0,
+  date: moment(),
 };
 
 export default (state = initialState, action) => {
