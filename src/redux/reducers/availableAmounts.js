@@ -10,6 +10,7 @@ const initialState = {
   },
   monthlyPayment: 0,
   extraPayments: [],
+  extraSpending: [],
 };
 
 export default (state = initialState, action) => {
@@ -30,8 +31,24 @@ export default (state = initialState, action) => {
     case Actions.ADD_EXTRA_PAYMENT:
       return {
         ...state,
+        desiredSpending: {
+          date: moment.now(),
+          amount: 0,
+        },
         extraPayments: [
           ...(state.extraPayments || []),
+          { ...action.payload, id: uuidv4() },
+        ],
+      };
+    case Actions.ADD_EXTRA_SPENDING:
+      return {
+        ...state,
+        desiredSpending: {
+          date: moment.now(),
+          amount: 0,
+        },
+        extraSpending: [
+          ...(state.extraSpending || []),
           { ...action.payload, id: uuidv4() },
         ],
       };

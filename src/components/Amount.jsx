@@ -11,10 +11,6 @@ import { KeyboardDatePicker } from "@material-ui/pickers";
 import moment from "moment";
 
 const Amount = (props) => {
-  const [desiredSpendingAmount, setDesiredSpendingAmount] = useState(
-    props.desiredSpendingAmount
-  );
-
   const cleanNumber = (num) => {
     return parseFloat((parseFloat(num || 0) || 0).toFixed(2));
   };
@@ -29,13 +25,14 @@ const Amount = (props) => {
           label="One Time Extra Payment"
           margin="normal"
           variant="outlined"
-          value={desiredSpendingAmount}
-          onChange={({ target: { value } }) => setDesiredSpendingAmount(value)}
+          value={props.desiredSpendingAmount}
+          onChange={({ target: { value } }) => {
+            props.setDesiredSpending({ amount: value });
+          }}
           onBlur={() => {
             props.setDesiredSpending({
-              amount: cleanNumber(desiredSpendingAmount),
+              amount: cleanNumber(props.desiredSpendingAmount),
             });
-            setDesiredSpendingAmount(cleanNumber(desiredSpendingAmount));
           }}
         />
         <Typography variant="h6" color="initial">

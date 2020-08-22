@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@material-ui/core";
-import { addExtraPayment } from "../redux/actionCreators";
+import { addExtraPayment, addExtraSpending } from "../redux/actionCreators";
 import { connect } from "react-redux";
 
 const SpendOrSave = (props) => {
@@ -17,17 +17,15 @@ const SpendOrSave = (props) => {
         color="primary"
         onClick={() => props.addExtraPayment(props.desiredSpending)}
       >
-        Payoff Loans
+        Put towards loans
       </Button>
-      {/* <Button
+      <Button
         variant="contained"
         color="secondary"
-        onClick={() => {
-          alert("Doesn't do anything yet...");
-        }}
+        onClick={() => props.addExtraSpending(props.desiredSpending)}
       >
         Spend
-      </Button> */}
+      </Button>
     </div>
   );
 };
@@ -40,6 +38,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   addExtraPayment,
+  addExtraSpending,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpendOrSave);

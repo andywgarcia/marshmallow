@@ -6,7 +6,7 @@ const getExtraPaymentAmountInMonth = (additionalPayments, month) => {
   // console.log(additionalPayments);
   return additionalPayments.reduce((acc, curr) => {
     if (moment(curr.date).isSame(month, "month")) {
-      return acc + curr.amount;
+      return acc + (parseFloat(curr.amount) || 0);
     }
     return acc;
   }, 0);
