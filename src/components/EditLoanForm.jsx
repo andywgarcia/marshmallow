@@ -65,7 +65,7 @@ function AddLoanForm(props) {
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
           }}
-          value={props.monthlyMinimumPayment || 0}
+          value={props.monthlyMinimumPayment}
           onChange={({ target: { value } }) =>
             props.updateLoan({
               id: props.loanId,
