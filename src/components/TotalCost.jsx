@@ -28,7 +28,7 @@ const mapStateToProps = (state) => {
   const additionalPaymentsPlan = selectors.getPaymentPlanWithAdditionalPayments(
     state
   );
-  const potentialTotalPaid = selectors.getPotentialTotalPaid(state);
+  const potentialTotalPaid = selectors.getTotalPaidWithDesiredSpending(state);
   const potentialPaymentPlan = selectors.getPaymentPlanWithAdditionalDesiredSpending(
     state
   );

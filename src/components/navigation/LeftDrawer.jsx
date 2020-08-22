@@ -27,13 +27,23 @@ function LeftDrawer(props) {
         className={props.classes.toolbar}
         style={{
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <Typography variant="h5" style={{ color: "green" }}>
-          ${(props.interestSaved || 0).toFixed(2)} saved
-        </Typography>
+        <div>
+          <Typography variant="h5" style={{ color: "green" }}>
+            ${(props.interestSaved || 0).toFixed(2)} saved
+          </Typography>
+        </div>
+        {(props.interestMissed || 0).toFixed(2) > 0 && (
+          <div>
+            <Typography variant="caption" style={{ color: "red" }}>
+              (${(props.interestMissed || 0).toFixed(2)} didn't save...)
+            </Typography>
+          </div>
+        )}
       </div>
       <Divider />
       <List>
@@ -112,9 +122,16 @@ const mapStateToProps = (state) => {
   const additionalPaymentsPlan = selectors.getPaymentPlanWithAdditionalPayments(
     state
   );
+
+  const interestSaved = originalTotalPaid - totalPaidAfterAdditionalPayments;
+
+  const potentialTotalPaid = selectors.getPotentialTotalPaid(state);
+  const potentialInterestSaved = originalTotalPaid - potentialTotalPaid;
+
   return {
     interestSaved: originalTotalPaid - totalPaidAfterAdditionalPayments,
     monthsSooner: originalPaymentPlan.length - additionalPaymentsPlan.length,
+    interestMissed: potentialInterestSaved - interestSaved,
   };
 };
 const mapDispatchToProps = {
