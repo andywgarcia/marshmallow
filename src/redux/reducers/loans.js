@@ -54,6 +54,11 @@ export default (state = initialState, action) => {
         ...state,
         allLoans: [...state.allLoans, { ...newLoan, id: action.payload }],
       };
+    case Actions.REMOVE_LOAN:
+      return {
+        ...state,
+        allLoans: state.allLoans.filter(({ id }) => id !== action.payload),
+      };
     default:
       return state;
   }

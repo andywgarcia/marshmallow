@@ -1,10 +1,29 @@
 import React from "react";
 import { connect } from "react-redux";
-import { updateLoan } from "../redux/actionCreators";
-import { TextField, InputAdornment } from "@material-ui/core";
+import { updateLoan, removeLoan } from "../redux/actionCreators";
+import {
+  TextField,
+  InputAdornment,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+} from "@material-ui/core";
 import { getLoan } from "../redux/selectors";
+import { useNavigate } from "@reach/router";
 
 function AddLoanForm(props) {
+  const navigate = useNavigate();
+
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <div>
       <h1>Loan Information</h1>
@@ -82,6 +101,37 @@ function AddLoanForm(props) {
           }
         />
       </div>
+      <Button variant="outlined" color="secondary" onClick={handleClickOpen}>
+        Remove Loan
+      </Button>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Delete this loan?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              navigate("/loans");
+              props.removeLoan(props.loanId);
+              // handleClose();
+            }}
+            color="secondary"
+            autoFocus
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
@@ -89,15 +139,16 @@ function AddLoanForm(props) {
 const mapStateToProps = (state, ownProps) => {
   const loan = getLoan(state, ownProps);
   return {
-    id: loan.id,
-    balance: loan.balance,
-    interestRate: loan.interestRate,
-    monthlyMinimumPayment: loan.monthlyMinimumPayment,
+    id: loan?.id,
+    balance: loan?.balance,
+    interestRate: loan?.interestRate,
+    monthlyMinimumPayment: loan?.monthlyMinimumPayment,
   };
 };
 
 const mapDispatchToProps = {
   updateLoan,
+  removeLoan,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddLoanForm);

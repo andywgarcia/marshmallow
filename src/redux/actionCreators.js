@@ -18,3 +18,4 @@ export const setDesiredLoanSpendingDate = createAction(
 );
 
 export const addExtraSpending = createAction(Actions.ADD_EXTRA_SPENDING);
+export const removeLoan = createAction(Actions.REMOVE_LOAN);
