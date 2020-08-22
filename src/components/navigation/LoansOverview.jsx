@@ -7,7 +7,7 @@ import FolderIcon from "@material-ui/icons/Folder";
 const LoansOverview = (props) => {
   return (
     <List>
-      <Link to={"/loans"}>
+      <Link to={"/loans"} onClick={props.closeDrawer}>
         <ListItem button>
           <ListItemIcon>
             <FolderIcon />
@@ -16,7 +16,11 @@ const LoansOverview = (props) => {
         </ListItem>
       </Link>
       {props.allLoans.map((loan, index) => (
-        <Link to={`/loan/${loan.id}`} key={`loan-overview-${loan.id}`}>
+        <Link
+          to={`/loan/${loan.id}`}
+          key={`loan-overview-${loan.id}`}
+          onClick={props.closeDrawer}
+        >
           <ListItem button>
             <ListItemIcon>
               <FolderIcon />

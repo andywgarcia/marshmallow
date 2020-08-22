@@ -47,7 +47,7 @@ function LeftDrawer(props) {
       </div>
       <Divider />
       <List>
-        <Link to="/">
+        <Link to="/" onClick={props.closeDrawer}>
           <ListItem button key="Calculator">
             <ListItemIcon>
               <AttachMoneyIcon />
@@ -60,9 +60,10 @@ function LeftDrawer(props) {
           onClick={() => {
             props.addLoan(id);
             createNewId(uuidv4());
+            props.closeDrawer();
           }}
         >
-          <ListItem button key="Add Loan">
+          <ListItem button key="Add Loan" onClick={props.closeDrawer}>
             <ListItemIcon>
               <AddIcon />
             </ListItemIcon>
@@ -71,7 +72,7 @@ function LeftDrawer(props) {
         </Link>
       </List>
       <Divider />
-      <LoansOverview />
+      <LoansOverview closeDrawer={props.closeDrawer} />
     </div>
   );
 
@@ -143,6 +144,7 @@ LeftDrawer.propTypes = {
   handleDrawerToggle: PropTypes.func,
   classes: PropTypes.any,
   theme: PropTypes.any,
+  closeDrawer: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LeftDrawer);

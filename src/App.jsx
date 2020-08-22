@@ -91,6 +91,7 @@ function App() {
               handleDrawerToggle={handleDrawerToggle}
               theme={theme}
               isMobileOpen={mobileOpen}
+              closeDrawer={() => setMobileOpen(false)}
             />
             <Container maxWidth="xs" className={`App ${classes.Root} `}>
               <main className={classes.content}>
