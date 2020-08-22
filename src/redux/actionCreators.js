@@ -1,8 +1,6 @@
 import * as Actions from "./actions";
 import { createAction } from "@reduxjs/toolkit";
 
-export const setLoanInfo = createAction(Actions.SET_LOAN_INFO);
-
 export const updateLoan = createAction(Actions.UPDATE_LOAN);
 export const setDesiredSpending = createAction(Actions.SET_DESIRED_SPENDING);
 

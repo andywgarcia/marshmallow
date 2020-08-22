@@ -1,4 +1,3 @@
-export const SET_LOAN_INFO = "SET_LOAN_INFO";
 export const ADD_LOAN = "ADD_LOAN";
 export const UPDATE_LOAN = "UPDATE_LOAN";
 export const SET_AVAILABLE_LOAN_PAYMENT_AMOUNT =
