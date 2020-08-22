@@ -11,11 +11,9 @@ import {
   DialogContentText,
 } from "@material-ui/core";
 import { getLoan } from "../redux/selectors";
-import { useNavigate } from "@reach/router";
+import { Link } from "@reach/router";
 
 function AddLoanForm(props) {
-  const navigate = useNavigate();
-
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -119,17 +117,18 @@ function AddLoanForm(props) {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button
+          <Link
+            to="/loans"
+            replace
             onClick={() => {
-              navigate("/loans");
               props.removeLoan(props.loanId);
-              // handleClose();
+              handleClose();
             }}
-            color="secondary"
-            autoFocus
           >
-            Delete
-          </Button>
+            <Button color="secondary" autoFocus>
+              Delete
+            </Button>
+          </Link>
         </DialogActions>
       </Dialog>
     </div>
