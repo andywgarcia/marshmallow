@@ -19,18 +19,29 @@ const capitalizeBalance = (balance, rate, periodsPerYear = 12.0) => {
   return balance * (1 + rate / 100 / periodsPerYear);
 };
 
-const getNextPayments = (loans, paymentHistory) => {
+const isLoanActive = (loan, date) => {
+  if (loan.date) {
+    return moment(loan.date).isSameOrBefore(date, "month");
+  }
+  return true;
+};
+
+const getNextPayments = (loans, paymentHistory, date = moment()) => {
   let spent = 0;
   const paymentsThisMonthWithoutAdditionalPayments = [...loans]
+    // This needs to check for if the loan is active (loan A could have started 1 year before loan B, so loan B won't be active until after that first year)
+    // .filter((loan) => isLoanActive(loan, date))
     .reverse()
     .reduce((acc, loan) => {
-      // This needs to check for if the loan is active (loan A could have started 1 year before loan B, so loan B won't be active until after that first year)
       const balance =
-        paymentHistory.length > 0
+        paymentHistory.length > 0 &&
+        paymentHistory[paymentHistory.length - 1][loan.id] !== undefined
           ? paymentHistory[paymentHistory.length - 1][loan.id].balance
           : loan.balance;
+
       const lastPayment =
-        paymentHistory.length > 0
+        paymentHistory.length > 0 &&
+        paymentHistory[paymentHistory.length - 1][loan.id] !== undefined
           ? paymentHistory[paymentHistory.length - 1][loan.id].payment
           : 0;
       const capitalizedBalance = capitalizeBalance(
@@ -50,6 +61,7 @@ const getNextPayments = (loans, paymentHistory) => {
       return {
         ...acc,
         [loan.id]: {
+          ...loan,
           id: loan.id,
           balance: capitalizedBalance,
           payment: payment,
@@ -102,6 +114,15 @@ const getUpdatedPaymentsThisMonthWithExtraMonthlyPayments = (
   return [updatedLoanPayments, extraPaymentAmount];
 };
 
+const getOldestLoanDate = (loans) => {
+  return loans.reduce((acc, curr) => {
+    if (curr.date && moment(curr.date).isBefore(acc)) {
+      return moment(curr.date);
+    }
+    return acc;
+  }, moment());
+};
+
 /*
 input
 [
@@ -141,10 +162,9 @@ const generatePaymentPlan = (
   debtSortFunction = () => 0,
   additionalPayments = []
 ) => {
-  console.log(loans);
   const MAX_MONTHS = 12 * 30;
   let currentMonth = 0;
-  let currentDate = moment(); // TODO: This needs to start with the oldest loan
+  let startingDate = getOldestLoanDate(loans);
   let payments = [];
   const sortedLoans = [...loans].sort(debtSortFunction);
 
@@ -157,14 +177,18 @@ const generatePaymentPlan = (
     const [
       paymentsThisMonthWithoutAdditionalPayments,
       thisMonthsMinimumPaymentTotal,
-    ] = getNextPayments(loans, payments);
+    ] = getNextPayments(
+      loans,
+      payments,
+      moment(startingDate).add(currentMonth, "M")
+    );
 
     const extraAmountThisMonth =
       totalMonthlyPayment -
       thisMonthsMinimumPaymentTotal +
       getExtraPaymentAmountInMonth(
         additionalPayments,
-        moment(currentDate).add(currentMonth, "M")
+        moment(startingDate).add(currentMonth, "M")
       ); // This value assumes that the monthly payments will "roll over" when a loan finishes
 
     const [
@@ -204,19 +228,19 @@ export const getTotalMonthlyMinPayment = createSelector(
   [(state) => state.loans.allLoans],
   (loans) =>
     loans.reduce((acc, curr) => {
-      return acc + curr.monthlyMinimumPayment;
+      return acc + curr.monthlyMinimumPayment; // total monthly minimum payment needs to be only active when the loan is active. Looks like this will have to be calculated in the function
     }, 0)
 );
 
 export const getTotalMonthlyPayment = createSelector(
   [
     (state) => state.loans.allLoans,
-    (state) => state.availableAmounts.monthlyPayment,
+    (state) => state.availableAmounts.monthlyPayment, // total monthly minimum payment needs to be only active when the loan is active. Looks like this will have to be calculated in the function
   ],
   (loans, manualAmount) =>
     Math.max(
       loans.reduce((acc, curr) => {
-        return acc + curr.monthlyMinimumPayment;
+        return acc + curr.monthlyMinimumPayment; // total monthly minimum payment needs to be only active when the loan is active. Looks like this will have to be calculated in the function
       }, 0),
       manualAmount || 0
     )
