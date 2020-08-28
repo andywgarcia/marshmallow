@@ -3,15 +3,103 @@ import { getDebtPayoffSortFunction } from "./userPreferences";
 import moment from "moment";
 
 const getExtraPaymentAmountInMonth = (additionalPayments, month) => {
-  // console.log(additionalPayments);
   return additionalPayments.reduce((acc, curr) => {
     if (moment(curr.date).isSame(month, "month")) {
       return acc + (parseFloat(curr.amount) || 0);
     }
     return acc;
   }, 0);
-  // console.log(`Extra payment in month of ${moment().add(month, 'M').format('MM YYYY')} is ${}`)
-  // return 0;
+};
+
+const getMonthlyMinimumPayment = (loans, loanId) => {
+  return loans.find((loan) => loan.id === loanId).monthlyMinimumPayment;
+};
+
+const capitalizeBalance = (balance, rate, periodsPerYear = 12.0) => {
+  return balance * (1 + rate / 100 / periodsPerYear);
+};
+
+const getNextPayments = (loans, paymentHistory) => {
+  let spent = 0;
+  const paymentsThisMonthWithoutAdditionalPayments = [...loans]
+    .reverse()
+    .reduce((acc, loan) => {
+      // This needs to check for if the loan is active (loan A could have started 1 year before loan B, so loan B won't be active until after that first year)
+      const balance =
+        paymentHistory.length > 0
+          ? paymentHistory[paymentHistory.length - 1][loan.id].balance
+          : loan.balance;
+      const lastPayment =
+        paymentHistory.length > 0
+          ? paymentHistory[paymentHistory.length - 1][loan.id].payment
+          : 0;
+      const capitalizedBalance = capitalizeBalance(
+        balance - lastPayment,
+        loan.interestRate
+      );
+      let payment = 0;
+      if (capitalizedBalance > 0) {
+        const minPayment = getMonthlyMinimumPayment(loans, loan.id);
+        if (capitalizedBalance <= minPayment) {
+          payment = capitalizedBalance;
+        } else {
+          payment = minPayment;
+        }
+      }
+      spent += payment;
+      return {
+        ...acc,
+        [loan.id]: {
+          id: loan.id,
+          balance: capitalizedBalance,
+          payment: payment,
+          interestRate: loan.interestRate,
+        },
+      };
+    }, {});
+  return [paymentsThisMonthWithoutAdditionalPayments, spent];
+};
+
+const getUpdatedPaymentsThisMonthWithExtraMonthlyPayments = (
+  paymentsThisMonthWithoutAdditionalPayments,
+  sortFunction,
+  extraPaymentAmount
+) => {
+  // This needs to check for if the loan is active (loan A could have started 1 year before loan B, so loan B won't be active until after that first year)
+  const updatedLoanPayments = Object.values(
+    paymentsThisMonthWithoutAdditionalPayments
+  )
+    .filter((loan) => (loan.balance - loan.payment).toFixed(2) > 0)
+    .sort(sortFunction)
+    .map((loan) => {
+      const remainingBalance = loan.balance - loan.payment;
+
+      if (remainingBalance.toFixed(2) > 0) {
+        let newPayment;
+        if (remainingBalance < extraPaymentAmount) {
+          newPayment = {
+            ...loan,
+            payment: loan.payment + remainingBalance,
+            extraPayment: remainingBalance,
+          };
+          extraPaymentAmount -= remainingBalance;
+        } else {
+          newPayment = {
+            ...loan,
+            payment: loan.payment + extraPaymentAmount,
+            extraPayment: extraPaymentAmount,
+          };
+          extraPaymentAmount = 0;
+        }
+        return newPayment;
+      }
+      return loan;
+    })
+    .reduce((acc, payment) => {
+      return { ...acc, [payment.id]: payment };
+    }, {});
+
+  return [updatedLoanPayments, extraPaymentAmount];
 };
 
 /*
@@ -46,9 +134,7 @@ output
     }
 ]
 
-
 */
-
 const generatePaymentPlan = (
   loans,
   totalMonthlyPayment,
@@ -57,96 +143,28 @@ const generatePaymentPlan = (
 ) => {
   const MAX_MONTHS = 12 * 30;
   let currentMonth = 0;
-  let currentDate = moment();
+  let currentDate = moment(); // TODO: This needs to start with the oldest loan
   let payments = [];
   const sortedLoans = [...loans].sort(debtSortFunction);
 
   let balance = sortedLoans.reduce(
-    (acc, curr) => curr.balance * (1 + curr.interestRate / 100 / 12.0) + acc,
+    (acc, curr) => capitalizeBalance(curr.balance, curr.interestRate) + acc,
     0
   );
-  const getMonthlyMinimumPayment = (loanId) => {
-    return loans.find((loan) => loan.id === loanId).monthlyMinimumPayment;
-  };
 
   while (balance.toFixed(2) > 0) {
     let currentMonthAllowedPaymentAmount = totalMonthlyPayment;
-    const paymentsThisMonthWithoutAdditionalPayments = [...sortedLoans]
-      .reverse()
-      .reduce((acc, loan) => {
-        const balance =
-          payments.length > 0
-            ? payments[payments.length - 1][loan.id].balance
-            : loan.balance;
-        const lastPayment =
-          payments.length > 0
-            ? payments[payments.length - 1][loan.id].payment
-            : 0;
-        const capitalizedBalance =
-          (balance - lastPayment) * (1 + loan.interestRate / 100 / 12.0);
-        let payment = 0;
-        if (capitalizedBalance > 0) {
-          if (capitalizedBalance <= getMonthlyMinimumPayment(loan.id)) {
-            payment = capitalizedBalance;
-          } else {
-            payment = getMonthlyMinimumPayment(loan.id);
-          }
-        }
-        currentMonthAllowedPaymentAmount =
-          currentMonthAllowedPaymentAmount - payment;
-        return {
-          ...acc,
-          [loan.id]: {
-            id: loan.id,
-            balance: capitalizedBalance,
-            payment: payment,
-            interestRate: loan.interestRate,
-          },
-        };
-      }, {});
 
-    const getPaymentsThisMonthWithExtraMonthlyPayments = (
+    const [
       paymentsThisMonthWithoutAdditionalPayments,
-      sortFunction,
-      extraPaymentAmount
-    ) => {
-      const updatedLoanPayments = Object.values(
-        paymentsThisMonthWithoutAdditionalPayments
-      )
-        .filter((loan) => (loan.balance - loan.payment).toFixed(2) > 0)
-        .sort(sortFunction)
-        .map((loan) => {
-          const remainingBalance = loan.balance - loan.payment;
+      thisMonthsMinimumPaymentTotal,
+    ] = getNextPayments(loans, payments);
 
-          if (remainingBalance.toFixed(2) > 0) {
-            let newPayment;
-            if (remainingBalance < extraPaymentAmount) {
-              newPayment = {
-                ...loan,
-                payment: loan.payment + remainingBalance,
-                extraPayment: remainingBalance,
-              };
-              extraPaymentAmount = extraPaymentAmount - remainingBalance;
-            } else {
-              newPayment = {
-                ...loan,
-                payment: loan.payment + extraPaymentAmount,
-                extraPayment: extraPaymentAmount,
-              };
-              extraPaymentAmount = 0;
-            }
-            return newPayment;
-          }
-          return loan;
-        })
-        .reduce((acc, payment) => {
-          return { ...acc, [payment.id]: payment };
-        }, {});
+    currentMonthAllowedPaymentAmount -= thisMonthsMinimumPaymentTotal;
 
-      return [updatedLoanPayments, extraPaymentAmount];
-    };
-
-    const [newPayment, leftover] = getPaymentsThisMonthWithExtraMonthlyPayments(
+    const [
+      paymentsThisMonthWithAdditionalPayments,
+    ] = getUpdatedPaymentsThisMonthWithExtraMonthlyPayments(
       paymentsThisMonthWithoutAdditionalPayments,
       debtSortFunction,
       currentMonthAllowedPaymentAmount +
@@ -156,10 +174,9 @@ const generatePaymentPlan = (
         )
     );
 
-    currentMonthAllowedPaymentAmount = leftover;
     const payment = {
       ...paymentsThisMonthWithoutAdditionalPayments,
-      ...newPayment,
+      ...paymentsThisMonthWithAdditionalPayments,
     };
 
     payments.push(payment);
@@ -171,7 +188,7 @@ const generatePaymentPlan = (
       break;
     }
   }
-  return payments;
+  return payments; // Adding in the loan dates means that the length of the payments aren't "from now", but instead, from the oldest date
 };
 
 export const getLoan = createSelector(
