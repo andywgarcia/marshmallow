@@ -139,8 +139,9 @@ const generatePaymentPlan = (
   loans,
   totalMonthlyPayment,
   debtSortFunction = () => 0,
-  additionalPayments = [] // I switched additional payments to an array, which it needs to be, but now I need to update the input side of things
+  additionalPayments = []
 ) => {
+  console.log(loans);
   const MAX_MONTHS = 12 * 30;
   let currentMonth = 0;
   let currentDate = moment(); // TODO: This needs to start with the oldest loan
@@ -153,25 +154,25 @@ const generatePaymentPlan = (
   );
 
   while (balance.toFixed(2) > 0) {
-    let currentMonthAllowedPaymentAmount = totalMonthlyPayment;
-
     const [
       paymentsThisMonthWithoutAdditionalPayments,
       thisMonthsMinimumPaymentTotal,
     ] = getNextPayments(loans, payments);
 
-    currentMonthAllowedPaymentAmount -= thisMonthsMinimumPaymentTotal;
+    const extraAmountThisMonth =
+      totalMonthlyPayment -
+      thisMonthsMinimumPaymentTotal +
+      getExtraPaymentAmountInMonth(
+        additionalPayments,
+        moment(currentDate).add(currentMonth, "M")
+      ); // This value assumes that the monthly payments will "roll over" when a loan finishes
 
     const [
       paymentsThisMonthWithAdditionalPayments,
     ] = getUpdatedPaymentsThisMonthWithExtraMonthlyPayments(
       paymentsThisMonthWithoutAdditionalPayments,
       debtSortFunction,
-      currentMonthAllowedPaymentAmount +
-        getExtraPaymentAmountInMonth(
-          additionalPayments,
-          moment(currentDate).add(currentMonth, "M")
-        )
+      extraAmountThisMonth
     );
 
     const payment = {
