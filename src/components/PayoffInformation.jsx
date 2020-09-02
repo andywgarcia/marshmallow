@@ -10,8 +10,19 @@ import {
 } from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
+import CurrencyInput from "react-currency-input";
 
 const PayoffInformation = (props) => {
+  let componentDidMount_super = CurrencyInput.prototype.componentDidMount;
+  CurrencyInput.prototype.componentDidMount = function () {
+    this.theInput.setSelectionRange_super = this.theInput.setSelectionRange;
+    this.theInput.setSelectionRange = (start, end) => {
+      if (document.activeElement === this.theInput) {
+        this.theInput.setSelectionRange_super(start, end);
+      }
+    };
+    componentDidMount_super.call(this, ...arguments);
+  };
   return (
     <div>
       <Typography variant="h4" color="initial">
@@ -75,23 +86,6 @@ const PayoffInformation = (props) => {
           label="Monthly Payment"
           variant="filled"
           margin="normal"
-          value={props.monthlyPayment}
-          onChange={({ target: { value } }) => {
-            props.setAvailableLoanPaymentAmount(value);
-          }}
-          onBlur={() => {
-            props.setAvailableLoanPaymentAmount(
-              parseFloat(props.monthlyPayment || 0)
-            );
-          }}
-          error={props.monthlyPayment < props.monthlyMinPayment}
-          helperText={
-            props.monthlyPayment < props.monthlyMinPayment
-              ? `The monthly payment amount must be at least $${parseFloat(
-                  props.monthlyMinPayment || 0
-                ).toFixed(2)}`
-              : ""
-          }
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -108,7 +102,26 @@ const PayoffInformation = (props) => {
                 </IconButton>
               </InputAdornment>
             ),
+            inputComponent: CurrencyInput,
+            inputProps: {
+              value: props.monthlyPayment,
+              onChangeEvent: (event, maskedValue, floatValue) => {
+                props.setAvailableLoanPaymentAmount(floatValue);
+              },
+              inputType: "number",
+              pattern: "\\d*",
+              selectAllOnFocus: true,
+            },
           }}
+          InputLabelProps={{ shrink: true }}
+          error={props.monthlyPayment < props.monthlyMinPayment}
+          helperText={
+            props.monthlyPayment < props.monthlyMinPayment
+              ? `The monthly payment amount must be at least $${parseFloat(
+                  props.monthlyMinPayment || 0
+                ).toFixed(2)}`
+              : null
+          }
         />
       </div>
     </div>

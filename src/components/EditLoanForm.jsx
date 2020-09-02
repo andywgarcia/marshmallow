@@ -14,6 +14,7 @@ import { KeyboardDatePicker } from "@material-ui/pickers";
 import { getLoan } from "../redux/selectors";
 import { Link } from "@reach/router";
 import moment from "moment";
+import CurrencyInput from "react-currency-input";
 
 function AddLoanForm(props) {
   const [open, setOpen] = React.useState(false);
@@ -22,6 +23,17 @@ function AddLoanForm(props) {
   };
   const handleClose = () => {
     setOpen(false);
+  };
+
+  let componentDidMount_super = CurrencyInput.prototype.componentDidMount;
+  CurrencyInput.prototype.componentDidMount = function () {
+    this.theInput.setSelectionRange_super = this.theInput.setSelectionRange;
+    this.theInput.setSelectionRange = (start, end) => {
+      if (document.activeElement === this.theInput) {
+        this.theInput.setSelectionRange_super(start, end);
+      }
+    };
+    componentDidMount_super.call(this, ...arguments);
   };
 
   return (
@@ -35,20 +47,21 @@ function AddLoanForm(props) {
           margin="normal"
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            inputComponent: CurrencyInput,
+            inputProps: {
+              value: props.balance,
+              onChangeEvent: (event, maskedValue, floatValue) => {
+                props.updateLoan({
+                  id: props.loanId,
+                  balance: floatValue,
+                });
+              },
+              inputType: "number",
+              pattern: "\\d*",
+              selectAllOnFocus: true,
+            },
           }}
-          value={props.balance}
-          onChange={({ target: { value } }) => {
-            props.updateLoan({
-              id: props.loanId,
-              balance: value,
-            });
-          }}
-          onBlur={() =>
-            props.updateLoan({
-              id: props.loanId,
-              balance: parseFloat(props.balance || 0),
-            })
-          }
+          InputLabelProps={{ shrink: true }}
         />
       </div>
       <div>
@@ -76,20 +89,29 @@ function AddLoanForm(props) {
           margin="normal"
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
+            inputComponent: CurrencyInput,
+            inputProps: {
+              value: props.interestRate,
+              onChangeEvent: (event, maskedValue, floatValue) => {
+                props.updateLoan({
+                  id: props.loanId,
+                  interestRate: floatValue,
+                });
+              },
+              inputType: "number",
+              pattern: "\\d*",
+              selectAllOnFocus: true,
+            },
           }}
-          value={props.interestRate}
-          onChange={({ target: { value } }) =>
-            props.updateLoan({
-              id: props.loanId,
-              interestRate: value,
-            })
-          }
-          onBlur={() =>
-            props.updateLoan({
-              id: props.loanId,
-              interestRate: parseFloat(props.interestRate || 0),
-            })
-          }
+          InputLabelProps={{ shrink: true }}
+          onBlur={() => {
+            if (props.interestRate > 100) {
+              props.updateLoan({
+                id: props.loanId,
+                interestRate: 100,
+              });
+            }
+          }}
         />
       </div>
       <div>
@@ -100,22 +122,21 @@ function AddLoanForm(props) {
           margin="normal"
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            inputComponent: CurrencyInput,
+            inputProps: {
+              value: props.monthlyMinimumPayment,
+              onChangeEvent: (event, maskedValue, floatValue) => {
+                props.updateLoan({
+                  id: props.loanId,
+                  monthlyMinimumPayment: floatValue,
+                });
+              },
+              inputType: "number",
+              pattern: "\\d*",
+              selectAllOnFocus: true,
+            },
           }}
-          value={props.monthlyMinimumPayment}
-          onChange={({ target: { value } }) =>
-            props.updateLoan({
-              id: props.loanId,
-              monthlyMinimumPayment: value,
-            })
-          }
-          onBlur={() =>
-            props.updateLoan({
-              id: props.loanId,
-              monthlyMinimumPayment: parseFloat(
-                props.monthlyMinimumPayment || 0
-              ),
-            })
-          }
+          InputLabelProps={{ shrink: true }}
         />
       </div>
       <Button variant="outlined" color="secondary" onClick={handleClickOpen}>
