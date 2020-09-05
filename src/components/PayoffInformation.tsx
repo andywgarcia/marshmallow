@@ -86,7 +86,6 @@ const PayoffInformation = (props) => {
                       parseFloat(props.monthlyMinPayment || 0)
                     );
                   }}
-                  // onMouseDown={handleMouseDownPassword}
                 >
                   <ClearIcon fontSize="small" />
                 </IconButton>

@@ -11,7 +11,9 @@ const DecimalInput = ({
   value,
   ...remainingProps
 }) => {
-  const intValue = Math.trunc(((value || 0) * 100).toFixed(2));
+  const intValue = Math.trunc(
+    Number.parseFloat(((value || 0) * 100).toFixed(2))
+  );
   if (!Number.isFinite(value) || Number.isNaN(value)) {
     throw new Error(`invalid value property ${intValue}`);
   }
@@ -34,12 +36,12 @@ const DecimalInput = ({
         nextValue =
           nextValueString === "" ? 0 : Number.parseInt(nextValueString, 10);
       }
-      if ((nextValue / 100).toFixed(2) > max) {
+      if (Number.parseFloat((nextValue / 100).toFixed(2)) > max) {
         return;
       }
       onValueChange(nextValue / 100);
     },
-    [max, onValueChange, intValue]
+    [max, onValueChange, value, intValue]
   );
   const handleChange = useCallback(() => {
     // DUMMY TO AVOID REACT WARNING
