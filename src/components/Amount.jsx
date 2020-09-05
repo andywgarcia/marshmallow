@@ -1,11 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
 import { setDesiredSpending } from "../redux/actionCreators";
-import { TextField, Typography } from "@material-ui/core";
+import { TextField, Typography, InputAdornment } from "@material-ui/core";
 
 import { KeyboardDatePicker } from "@material-ui/pickers";
 
 import moment from "moment";
+import DecimalInput from "./DecimalInput";
 
 const Amount = (props) => {
   const cleanNumber = (num) => {
@@ -22,15 +23,17 @@ const Amount = (props) => {
           label="One Time Extra Payment"
           margin="normal"
           variant="outlined"
-          value={props.desiredSpendingAmount}
-          onChange={({ target: { value } }) => {
-            props.setDesiredSpending({ amount: value });
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            inputComponent: DecimalInput,
+            inputProps: {
+              value: props.desiredSpendingAmount,
+              onValueChange: (value) => {
+                props.setDesiredSpending({ amount: value });
+              },
+            },
           }}
-          onBlur={() => {
-            props.setDesiredSpending({
-              amount: cleanNumber(props.desiredSpendingAmount),
-            });
-          }}
+          InputLabelProps={{ shrink: true }}
         />
         <Typography variant="h6" color="initial">
           on

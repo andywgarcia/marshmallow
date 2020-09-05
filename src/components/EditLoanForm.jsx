@@ -14,7 +14,7 @@ import { KeyboardDatePicker } from "@material-ui/pickers";
 import { getLoan } from "../redux/selectors";
 import { Link } from "@reach/router";
 import moment from "moment";
-import CurrencyInput from "react-currency-input";
+import DecimalInput from "./DecimalInput";
 
 function AddLoanForm(props) {
   const [open, setOpen] = React.useState(false);
@@ -23,17 +23,6 @@ function AddLoanForm(props) {
   };
   const handleClose = () => {
     setOpen(false);
-  };
-
-  let componentDidMount_super = CurrencyInput.prototype.componentDidMount;
-  CurrencyInput.prototype.componentDidMount = function () {
-    this.theInput.setSelectionRange_super = this.theInput.setSelectionRange;
-    this.theInput.setSelectionRange = (start, end) => {
-      if (document.activeElement === this.theInput) {
-        this.theInput.setSelectionRange_super(start, end);
-      }
-    };
-    componentDidMount_super.call(this, ...arguments);
   };
 
   return (
@@ -47,18 +36,15 @@ function AddLoanForm(props) {
           margin="normal"
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
-            inputComponent: CurrencyInput,
+            inputComponent: DecimalInput,
             inputProps: {
               value: props.balance,
-              onChangeEvent: (event, maskedValue, floatValue) => {
+              onValueChange: (value) => {
                 props.updateLoan({
                   id: props.loanId,
-                  balance: floatValue,
+                  balance: value,
                 });
               },
-              inputType: "number",
-              pattern: "\\d*",
-              selectAllOnFocus: true,
             },
           }}
           InputLabelProps={{ shrink: true }}
@@ -89,29 +75,19 @@ function AddLoanForm(props) {
           margin="normal"
           InputProps={{
             endAdornment: <InputAdornment position="end">%</InputAdornment>,
-            inputComponent: CurrencyInput,
+            inputComponent: DecimalInput,
             inputProps: {
               value: props.interestRate,
-              onChangeEvent: (event, maskedValue, floatValue) => {
+              onValueChange: (value) => {
                 props.updateLoan({
                   id: props.loanId,
-                  interestRate: floatValue,
+                  interestRate: value,
                 });
               },
-              inputType: "number",
-              pattern: "\\d*",
-              selectAllOnFocus: true,
+              max: 100,
             },
           }}
           InputLabelProps={{ shrink: true }}
-          onBlur={() => {
-            if (props.interestRate > 100) {
-              props.updateLoan({
-                id: props.loanId,
-                interestRate: 100,
-              });
-            }
-          }}
         />
       </div>
       <div>
@@ -122,18 +98,15 @@ function AddLoanForm(props) {
           margin="normal"
           InputProps={{
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
-            inputComponent: CurrencyInput,
+            inputComponent: DecimalInput,
             inputProps: {
               value: props.monthlyMinimumPayment,
-              onChangeEvent: (event, maskedValue, floatValue) => {
+              onValueChange: (value) => {
                 props.updateLoan({
                   id: props.loanId,
-                  monthlyMinimumPayment: floatValue,
+                  monthlyMinimumPayment: value,
                 });
               },
-              inputType: "number",
-              pattern: "\\d*",
-              selectAllOnFocus: true,
             },
           }}
           InputLabelProps={{ shrink: true }}

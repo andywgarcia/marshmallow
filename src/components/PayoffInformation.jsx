@@ -10,19 +10,9 @@ import {
 } from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
-import CurrencyInput from "react-currency-input";
+import DecimalInput from "./DecimalInput";
 
 const PayoffInformation = (props) => {
-  let componentDidMount_super = CurrencyInput.prototype.componentDidMount;
-  CurrencyInput.prototype.componentDidMount = function () {
-    this.theInput.setSelectionRange_super = this.theInput.setSelectionRange;
-    this.theInput.setSelectionRange = (start, end) => {
-      if (document.activeElement === this.theInput) {
-        this.theInput.setSelectionRange_super(start, end);
-      }
-    };
-    componentDidMount_super.call(this, ...arguments);
-  };
   return (
     <div>
       <Typography variant="h4" color="initial">
@@ -102,15 +92,12 @@ const PayoffInformation = (props) => {
                 </IconButton>
               </InputAdornment>
             ),
-            inputComponent: CurrencyInput,
+            inputComponent: DecimalInput,
             inputProps: {
               value: props.monthlyPayment,
-              onChangeEvent: (event, maskedValue, floatValue) => {
-                props.setAvailableLoanPaymentAmount(floatValue);
+              onValueChange: (value) => {
+                props.setAvailableLoanPaymentAmount(value);
               },
-              inputType: "number",
-              pattern: "\\d*",
-              selectAllOnFocus: true,
             },
           }}
           InputLabelProps={{ shrink: true }}
