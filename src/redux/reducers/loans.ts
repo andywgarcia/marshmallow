@@ -9,7 +9,11 @@ export interface Loan {
   date: Moment;
 }
 
-const initialState = {
+export interface State {
+  allLoans: Loan[];
+}
+
+const initialState: State = {
   allLoans: [],
 };
 
@@ -21,7 +25,7 @@ const newLoan = {
   date: moment(),
 };
 
-export default (state = initialState, action) => {
+export default (state: State = initialState, action) => {
   switch (action.type) {
     case Actions.UPDATE_LOAN:
       return {
