@@ -9,9 +9,6 @@ import moment from "moment";
 import DecimalInput from "./DecimalInput";
 
 const Amount = (props) => {
-  const cleanNumber = (num) => {
-    return parseFloat((parseFloat(num || 0) || 0).toFixed(2));
-  };
   return (
     <div>
       <Typography variant="h6" color="initial">
