@@ -3,8 +3,12 @@ import loanReducer from "./loans";
 import availableAmountsReducer from "./availableAmounts";
 import userPreferencesReducer from "./userPreferences";
 
-export default combineReducers({
+export const rootReducer = combineReducers({
   loans: loanReducer,
   availableAmounts: availableAmountsReducer,
   userPreferences: userPreferencesReducer,
 });
+
+export type RootState = ReturnType<typeof rootReducer>;
+
+export default rootReducer;

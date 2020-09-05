@@ -1,5 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { PAYOFF_METHODS } from "../constants";
+import { RootState } from "../reducers";
 
 export function selectSortFunction(
   payoffMethod = PAYOFF_METHODS.DEBT_AVALANCHE
@@ -15,6 +16,6 @@ export function selectSortFunction(
 }
 
 export const getDebtPayoffSortFunction = createSelector(
-  [(state) => state.userPreferences.payoffMehthod],
+  [(state: RootState) => state.userPreferences.payoffMethod],
   selectSortFunction
 );
