@@ -1,23 +1,12 @@
 import * as Actions from "../actionTypes";
-import moment, { Moment } from "moment";
-
-export interface Loan {
-  id: string;
-  balance: number;
-  interestRate: number;
-  monthlyMinimumPayment: number;
-  date: Moment;
-}
-
-export interface State {
-  allLoans: Loan[];
-}
+import moment from "moment";
+import { Loan, State } from "./types";
 
 const initialState: State = {
   allLoans: [],
 };
 
-const newLoan = {
+const newLoan: Loan = {
   id: null,
   balance: 0,
   interestRate: 0,

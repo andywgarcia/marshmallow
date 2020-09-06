@@ -3,43 +3,48 @@ import { getDebtPayoffSortFunction } from "../userPreferences/selectors";
 import moment, { Moment } from "moment";
 
 import { RootState } from "../rootReducer";
+import { Loan, LoanPayment, LoansPayment } from "./types";
+import { Payment } from "../availableAmounts/types";
 
-type LoanPayment = {
-  id: string;
-  balance: number;
-  payment: number;
-  date: Moment;
-};
-
-type PaymentPlanPayment = {
-  [loanId: string]: LoanPayment;
-};
-
-const getExtraPaymentAmountInMonth = (additionalPayments, month) => {
+const getExtraPaymentAmountInMonth = (
+  additionalPayments: Payment[],
+  month: Moment
+): number => {
   return additionalPayments.reduce((acc, curr) => {
     if (moment(curr.date).isSame(month, "month")) {
-      return acc + (parseFloat(curr.amount) || 0);
+      return acc + (curr.amount || 0);
     }
     return acc;
   }, 0);
 };
 
-const getMonthlyMinimumPayment = (loans, loanId) => {
+const getMonthlyMinimumPayment = (loans: Loan[], loanId: string): number => {
   return loans.find((loan) => loan.id === loanId).monthlyMinimumPayment;
 };
 
-const capitalizeBalance = (balance, rate, periodsPerYear = 12.0) => {
+const capitalizeBalance = (
+  balance: number,
+  rate: number,
+  periodsPerYear = 12.0
+): number => {
   return balance * (1 + rate / 100 / periodsPerYear);
 };
 
-const isLoanActive = (loan, date) => {
+const isLoanActive = (loan: Loan, date: Moment): boolean => {
   if (loan.date) {
     return moment(loan.date).isSameOrBefore(date, "month");
   }
   return true;
 };
 
-const getNextPayments = (loans, paymentHistory, date = moment()) => {
+const getNextPayments = (
+  loans: Loan[],
+  paymentHistory: LoansPayment[],
+  date = moment()
+): {
+  paymentsThisMonthWithoutAdditionalPayments: LoansPayment;
+  spent: number;
+} => {
   let spent = 0;
   const paymentsThisMonthWithoutAdditionalPayments = [...loans]
     // This needs to check for if the loan is active (loan A could have started 1 year before loan B, so loan B won't be active until after that first year)
@@ -82,16 +87,19 @@ const getNextPayments = (loans, paymentHistory, date = moment()) => {
         },
       };
     }, {});
-  return [paymentsThisMonthWithoutAdditionalPayments, spent];
+  return { paymentsThisMonthWithoutAdditionalPayments, spent };
 };
 
 const getUpdatedPaymentsThisMonthWithExtraMonthlyPayments = (
-  paymentsThisMonthWithoutAdditionalPayments,
-  sortFunction,
-  extraPaymentAmount
-) => {
+  paymentsThisMonthWithoutAdditionalPayments: LoansPayment,
+  sortFunction: (a: any, b: any) => number,
+  extraPaymentAmount: number
+): {
+  updatedLoansPayment: LoansPayment;
+  leftover: number;
+} => {
   // This needs to check for if the loan is active (loan A could have started 1 year before loan B, so loan B won't be active until after that first year)
-  const updatedLoanPayments = Object.values(
+  const updatedLoanPayments: LoansPayment = Object.values(
     paymentsThisMonthWithoutAdditionalPayments
   )
     .filter(
@@ -99,38 +107,43 @@ const getUpdatedPaymentsThisMonthWithExtraMonthlyPayments = (
         Number.parseFloat((loan.balance - loan.payment).toFixed(2)) > 0
     )
     .sort(sortFunction)
-    .map((loan: LoanPayment) => {
-      const remainingBalance = loan.balance - loan.payment;
+    .map(
+      (loan: LoanPayment): LoanPayment => {
+        const remainingBalance = loan.balance - loan.payment;
 
-      if (Number.parseFloat(remainingBalance.toFixed(2)) > 0) {
-        let newPayment;
-        if (remainingBalance < extraPaymentAmount) {
-          newPayment = {
-            ...loan,
-            payment: loan.payment + remainingBalance,
-            extraPayment: remainingBalance,
-          };
-          extraPaymentAmount -= remainingBalance;
-        } else {
-          newPayment = {
-            ...loan,
-            payment: loan.payment + extraPaymentAmount,
-            extraPayment: extraPaymentAmount,
-          };
-          extraPaymentAmount = 0;
+        if (Number.parseFloat(remainingBalance.toFixed(2)) > 0) {
+          let newPayment;
+          if (remainingBalance < extraPaymentAmount) {
+            newPayment = {
+              ...loan,
+              payment: loan.payment + remainingBalance,
+              extraPayment: remainingBalance,
+            };
+            extraPaymentAmount -= remainingBalance;
+          } else {
+            newPayment = {
+              ...loan,
+              payment: loan.payment + extraPaymentAmount,
+              extraPayment: extraPaymentAmount,
+            };
+            extraPaymentAmount = 0;
+          }
+          return newPayment;
         }
-        return newPayment;
+        return loan;
       }
-      return loan;
-    })
-    .reduce((acc, payment) => {
+    )
+    .reduce((acc, payment): LoansPayment => {
       return { ...acc, [payment.id]: payment };
     }, {});
 
-  return [updatedLoanPayments, extraPaymentAmount];
+  return {
+    updatedLoansPayment: updatedLoanPayments,
+    leftover: extraPaymentAmount,
+  };
 };
 
-const getOldestLoanDate = (loans) => {
+const getOldestLoanDate = (loans: Loan[]): Moment => {
   return loans.reduce((acc, curr) => {
     if (curr.date && moment(curr.date).isBefore(acc)) {
       return moment(curr.date);
@@ -139,49 +152,16 @@ const getOldestLoanDate = (loans) => {
   }, moment());
 };
 
-/*
-input
-[
-    {
-        id: "guid",
-        balance: 0,
-        interestRate: 0,
-        monthlyMinimumPayment: 0
-    }
-],
-totalMonthlyPayment: 0 | null --> If null, use sum of all monthly minimum payments. If less than sum of all monthly minimum payments, use sum of all monthly minimum payments
-debtSortFunction: () => 0 //default to no sorting, maybe this should just be the debt repayment method?
-additionalPayments: 
-[
-  {
-    id: guid,
-    date: "date-time",
-    amount: 0
-  }
-]
-
-
-output
-[
-    {
-        <loan1-id>: {
-            balance: 0, // after growth, before payment
-            paymentAmount: 0
-        }
-    }
-]
-
-*/
 const generatePaymentPlan = (
-  loans,
-  totalMonthlyPayment,
-  debtSortFunction = () => 0,
-  additionalPayments = []
-) => {
+  loans: Loan[],
+  totalMonthlyPayment: number,
+  debtSortFunction = (a: Loan, b: Loan) => 0,
+  additionalPayments: Payment[] = []
+): LoansPayment[] => {
   const MAX_MONTHS = 12 * 30;
   let currentMonth = 0;
   let startingDate = getOldestLoanDate(loans);
-  let payments = [];
+  let payments: LoansPayment[] = [];
   const sortedLoans = [...loans].sort(debtSortFunction);
 
   let balance = sortedLoans.reduce(
@@ -189,11 +169,11 @@ const generatePaymentPlan = (
     0
   );
 
-  while (balance.toFixed(2) > 0) {
-    const [
+  while (Number.parseFloat(balance.toFixed(2)) > 0) {
+    const {
       paymentsThisMonthWithoutAdditionalPayments,
-      thisMonthsMinimumPaymentTotal,
-    ] = getNextPayments(
+      spent: thisMonthsMinimumPaymentTotal,
+    } = getNextPayments(
       loans,
       payments,
       moment(startingDate).add(currentMonth, "M")
@@ -207,9 +187,9 @@ const generatePaymentPlan = (
         moment(startingDate).add(currentMonth, "M")
       ); // This value assumes that the monthly payments will "roll over" when a loan finishes
 
-    const [
-      paymentsThisMonthWithAdditionalPayments,
-    ] = getUpdatedPaymentsThisMonthWithExtraMonthlyPayments(
+    const {
+      updatedLoansPayment: paymentsThisMonthWithAdditionalPayments,
+    } = getUpdatedPaymentsThisMonthWithExtraMonthlyPayments(
       paymentsThisMonthWithoutAdditionalPayments,
       debtSortFunction,
       extraAmountThisMonth
@@ -320,7 +300,7 @@ export const getMonthsAwayFromPayoff = createSelector(
   (paymentPlan) => paymentPlan.length
 );
 
-const getTotalPaidForPaymentPlan = (paymentPlan: PaymentPlanPayment[]) =>
+const getTotalPaidForPaymentPlan = (paymentPlan: LoansPayment[]): number =>
   paymentPlan.reduce((acc, curr) => {
     return (
       acc +
