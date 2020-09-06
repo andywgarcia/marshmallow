@@ -1,23 +1,10 @@
-import * as Actions from "../actions";
-import moment, { Moment } from "moment";
+import * as Actions from "../actionTypes";
+import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
-
-export interface Payment {
-  id: string;
-  date: Moment;
-  amount: number;
-}
-
-export interface State {
-  desiredSpending: Payment;
-  monthlyPayment: number;
-  extraPayments: Payment[];
-  extraSpending: Payment[];
-}
+import { State, Payment } from "./types";
 
 const initialState: State = {
   desiredSpending: {
-    id: uuidv4(),
     date: moment(),
     amount: 0,
   },
@@ -26,7 +13,7 @@ const initialState: State = {
   extraSpending: [],
 };
 
-export default (state: State = initialState, action) => {
+export default (state: State = initialState, action): State => {
   switch (action.type) {
     case Actions.SET_DESIRED_SPENDING:
       return {
@@ -57,7 +44,7 @@ export default (state: State = initialState, action) => {
       return {
         ...state,
         desiredSpending: {
-          date: moment,
+          date: moment(),
           amount: 0,
         },
         extraSpending: [

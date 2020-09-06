@@ -1,15 +1,20 @@
-import * as Actions from "./actions";
 import { createAction } from "@reduxjs/toolkit";
+import * as Actions from "../actionTypes";
+import { Moment } from "moment";
 
-export const updateLoan = createAction(Actions.UPDATE_LOAN);
-export const setDesiredSpending = createAction(Actions.SET_DESIRED_SPENDING);
+interface DesiredSpendingPayload {
+  date?: Moment;
+  amount?: number;
+}
+
+export const setDesiredSpending = createAction<DesiredSpendingPayload>(
+  Actions.SET_DESIRED_SPENDING
+);
 
 export const addExtraPayment = createAction(Actions.ADD_EXTRA_PAYMENT);
 
-export const addLoan = createAction(Actions.ADD_LOAN);
 export const setAvailableLoanPaymentAmount = createAction(
   Actions.SET_AVAILABLE_LOAN_PAYMENT_AMOUNT
 );
 
 export const addExtraSpending = createAction(Actions.ADD_EXTRA_SPENDING);
-export const removeLoan = createAction(Actions.REMOVE_LOAN);

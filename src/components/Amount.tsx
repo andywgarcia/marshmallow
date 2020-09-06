@@ -1,14 +1,32 @@
 import React from "react";
-import { connect } from "react-redux";
-import { setDesiredSpending } from "../redux/actionCreators";
+import { connect, ConnectedProps } from "react-redux";
+import { setDesiredSpending } from "../store/actions";
 import { TextField, Typography, InputAdornment } from "@material-ui/core";
 
 import { KeyboardDatePicker } from "@material-ui/pickers";
 
 import moment from "moment";
 import DecimalInput from "./DecimalInput";
+import { RootState } from "../store/rootReducer";
 
-const Amount = (props) => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    desiredSpendingAmount: state.availableAmounts.desiredSpending.amount,
+    desiredSpendingDate: state.availableAmounts.desiredSpending.date,
+  };
+};
+
+const mapDispatchToProps = {
+  setDesiredSpending,
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type ReduxProps = ConnectedProps<typeof connector>;
+
+type Props = ReduxProps & {};
+
+const Amount = (props: Props) => {
   return (
     <div>
       <Typography variant="h6" color="initial">
@@ -53,14 +71,4 @@ const Amount = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    desiredSpendingAmount: state.availableAmounts.desiredSpending.amount,
-    desiredSpendingDate: state.availableAmounts.desiredSpending.date,
-  };
-};
-
-const mapDispatchToProps = {
-  setDesiredSpending,
-};
-export default connect(mapStateToProps, mapDispatchToProps)(Amount);
+export default connector(Amount);

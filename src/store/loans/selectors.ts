@@ -1,8 +1,8 @@
 import { createSelector } from "reselect";
-import { getDebtPayoffSortFunction } from "./userPreferences";
+import { getDebtPayoffSortFunction } from "../userPreferences/selectors";
 import moment, { Moment } from "moment";
 
-import { RootState } from "../reducers";
+import { RootState } from "../rootReducer";
 
 type LoanPayment = {
   id: string;

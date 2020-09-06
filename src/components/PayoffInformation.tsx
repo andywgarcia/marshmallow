@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as selectors from "../redux/selectors";
-import { setAvailableLoanPaymentAmount } from "../redux/actionCreators";
+import * as selectors from "../store/selectors";
+import { setAvailableLoanPaymentAmount } from "../store/actions";
 import {
   TextField,
   Typography,

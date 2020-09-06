@@ -1,4 +1,4 @@
-import * as Actions from "../actions";
+import * as Actions from "../actionTypes";
 import moment, { Moment } from "moment";
 
 export interface Loan {

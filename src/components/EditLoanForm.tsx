@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { updateLoan, removeLoan } from "../redux/actionCreators";
+import { updateLoan, removeLoan } from "../store/actions";
 import {
   TextField,
   InputAdornment,
@@ -11,7 +11,7 @@ import {
   DialogContentText,
 } from "@material-ui/core";
 import { KeyboardDatePicker } from "@material-ui/pickers";
-import { getLoan } from "../redux/selectors";
+import { getLoan } from "../store/selectors";
 import { Link } from "@reach/router";
 import moment from "moment";
 import DecimalInput from "./DecimalInput";

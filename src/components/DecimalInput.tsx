@@ -11,11 +11,9 @@ const DecimalInput = ({
   value,
   ...remainingProps
 }) => {
-  const intValue = Math.trunc(
-    Number.parseFloat(((value || 0) * 100).toFixed(2))
-  );
+  let intValue = Math.trunc(Number.parseFloat(((value || 0) * 100).toFixed(2)));
   if (!Number.isFinite(value) || Number.isNaN(value)) {
-    throw new Error(`invalid value property ${intValue}`);
+    intValue = 0;
   }
   const handleKeyDown = useCallback(
     (e) => {

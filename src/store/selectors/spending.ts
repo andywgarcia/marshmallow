@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 import moment from "moment";
-import { RootState } from "../reducers";
+import { RootState } from "../rootReducer";
 
 export const getSpendingHistory = createSelector(
   [

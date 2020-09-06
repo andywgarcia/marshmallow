@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import * as selectors from "../redux/selectors";
+import * as selectors from "../store/selectors";
 import { Typography } from "@material-ui/core";
 
 const TotalCost = ({ interestSaved, monthsSooner }) => {

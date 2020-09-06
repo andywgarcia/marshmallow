@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 
-import store from "./redux/store";
+import store from "./store";
 
 import "./App.css";
 import LoanOverview from "./pages/LoanOverview";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@material-ui/core";
-import { addExtraPayment, addExtraSpending } from "../redux/actionCreators";
+import { addExtraPayment, addExtraSpending } from "../store/actions";
 import { connect } from "react-redux";
 
 const SpendOrSave = (props) => {

@@ -12,9 +12,9 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { Link } from "@reach/router";
 import { v4 as uuidv4 } from "uuid";
 import { connect } from "react-redux";
-import { addLoan } from "../../redux/actionCreators";
+import { addLoan } from "../../store/actions";
 import LoansOverview from "./LoansOverview";
-import * as selectors from "../../redux/selectors";
+import * as selectors from "../../store/selectors";
 
 import { Typography } from "@material-ui/core";
 
