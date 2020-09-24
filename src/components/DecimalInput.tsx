@@ -1,62 +1,37 @@
-import React, { useCallback } from "react";
+import React from "react";
+import CurrencyInput from "react-currency-input";
 
-const VALID_FIRST = /^[1-9]{1}$/;
-const VALID_NEXT = /^[0-9]{1}$/;
-const DELETE_KEY_CODE = 8;
+function DecimalInput(props) {
+  const { inputRef, onChange, max, ...other } = props;
 
-const DecimalInput = ({
-  max = Number.MAX_SAFE_INTEGER,
-  pattern = "\\d*",
-  onValueChange,
-  value,
-  ...remainingProps
-}) => {
-  let intValue = Math.trunc(Number.parseFloat(((value || 0) * 100).toFixed(2)));
-  if (!Number.isFinite(value) || Number.isNaN(value)) {
-    intValue = 0;
-  }
-  const handleKeyDown = useCallback(
-    (e) => {
-      const { key, keyCode } = e;
-      if (
-        (intValue === 0 && !VALID_FIRST.test(key)) ||
-        (intValue !== 0 && !VALID_NEXT.test(key) && keyCode !== DELETE_KEY_CODE)
-      ) {
-        return;
-      }
-      const valueString = intValue.toString();
-      let nextValue;
-      if (keyCode !== DELETE_KEY_CODE) {
-        const nextValueString = value === 0 ? key : `${valueString}${key}`;
-        nextValue = Number.parseInt(nextValueString, 10);
-      } else {
-        const nextValueString = valueString.slice(0, -1);
-        nextValue =
-          nextValueString === "" ? 0 : Number.parseInt(nextValueString, 10);
-      }
-      if (Number.parseFloat((nextValue / 100).toFixed(2)) > max) {
-        return;
-      }
-      onValueChange(nextValue / 100);
-    },
-    [max, onValueChange, value, intValue]
-  );
-  const handleChange = useCallback(() => {
-    // DUMMY TO AVOID REACT WARNING
-  }, []);
-  const valueDisplay = (intValue / 100).toFixed(2);
-  const { inputRef = "", ...passedProps } = remainingProps;
+  const generateChangeEvent = (floatValue: number) => {
+    let value = floatValue;
+    if (max !== undefined && floatValue > max) {
+      value = max;
+    }
+    onChange({
+      target: {
+        name: props.name,
+        value: value,
+      },
+    });
+  };
+
   return (
-    <input
-      {...passedProps}
+    <CurrencyInput
+      onChangeEvent={(_event, _maskedValue, floatValue: number) => {
+        generateChangeEvent(floatValue);
+      }}
+      selectAllOnFocus
       inputMode="numeric"
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      value={valueDisplay}
-      ref={inputRef}
-      pattern={pattern}
+      pattern={"\\d*"}
+      {...other}
     />
   );
+}
+
+DecimalInput.defaultProps = {
+  max: undefined,
 };
 
 export default DecimalInput;

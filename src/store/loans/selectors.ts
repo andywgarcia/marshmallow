@@ -1,10 +1,13 @@
 import { createSelector } from "reselect";
 import { getDebtPayoffSortFunction } from "../userPreferences/selectors";
 import moment, { Moment } from "moment";
+import { v4 as uuidv4 } from "uuid";
 
 import { RootState } from "../rootReducer";
 import { Loan, LoanPayment, LoansPayment } from "./types";
 import { Payment } from "../availableAmounts/types";
+
+const allLoans = (state: RootState): Loan[] => state.loans.allLoans;
 
 const getExtraPaymentAmountInMonth = (
   additionalPayments: Payment[],
@@ -19,7 +22,7 @@ const getExtraPaymentAmountInMonth = (
 };
 
 const getMonthlyMinimumPayment = (loans: Loan[], loanId: string): number => {
-  return loans.find((loan) => loan.id === loanId).monthlyMinimumPayment;
+  return loans.find((loan) => loan.id === loanId)?.monthlyMinimumPayment || 0;
 };
 
 const capitalizeBalance = (
@@ -233,7 +236,7 @@ export const getTotalMonthlyPayment = createSelector(
     (state: RootState) => state.loans.allLoans,
     (state: RootState) => state.availableAmounts.monthlyPayment, // total monthly minimum payment needs to be only active when the loan is active. Looks like this will have to be calculated in the function
   ],
-  (loans, manualAmount) =>
+  (loans, manualAmount): number =>
     Math.max(
       loans.reduce((acc, curr) => {
         return acc + curr.monthlyMinimumPayment; // total monthly minimum payment needs to be only active when the loan is active. Looks like this will have to be calculated in the function
@@ -261,15 +264,20 @@ export const getPaymentPlanWithAdditionalPayments = createSelector(
   generatePaymentPlan
 );
 
+const getDesiredSpendingWithExtraPayments = (state: RootState): Payment[] => [
+  {
+    id: uuidv4(),
+    ...state.availableAmounts.desiredSpending,
+  },
+  ...(state.availableAmounts.extraPayments || []),
+];
+
 export const getPaymentPlanWithAdditionalDesiredSpending = createSelector(
   [
-    (state: RootState) => state.loans.allLoans,
+    allLoans,
     getTotalMonthlyPayment,
     getDebtPayoffSortFunction,
-    (state: RootState) => [
-      state.availableAmounts.desiredSpending,
-      ...(state.availableAmounts.extraPayments || []),
-    ],
+    getDesiredSpendingWithExtraPayments,
   ],
   generatePaymentPlan
 );

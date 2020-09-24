@@ -43,8 +43,10 @@ const Amount = (props: Props) => {
             inputComponent: DecimalInput,
             inputProps: {
               value: props.desiredSpendingAmount,
-              onValueChange: (value) => {
-                props.setDesiredSpending({ amount: value });
+              onChange: (e) => {
+                props.setDesiredSpending({
+                  amount: parseFloat((e.target as HTMLTextAreaElement).value),
+                });
               },
             },
           }}
@@ -61,7 +63,7 @@ const Amount = (props: Props) => {
           label="Date"
           inputVariant="outlined"
           value={props.desiredSpendingDate || moment()}
-          onChange={(date) => props.setDesiredSpending({ date: date })}
+          onChange={(date) => props.setDesiredSpending({ date: moment(date) })}
           KeyboardButtonProps={{
             "aria-label": "change date",
           }}

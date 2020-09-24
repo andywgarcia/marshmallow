@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
+import { connect, ConnectedProps } from "react-redux";
 import { updateLoan, removeLoan } from "../store/actions";
 import {
   TextField,
@@ -15,8 +15,33 @@ import { getLoan } from "../store/selectors";
 import { Link } from "@reach/router";
 import moment from "moment";
 import DecimalInput from "./DecimalInput";
+import { RootState } from "../store/rootReducer";
 
-function AddLoanForm(props) {
+const mapStateToProps = (state: RootState, ownProps) => {
+  const loan = getLoan(state, ownProps);
+  return {
+    id: loan?.id,
+    balance: loan?.balance,
+    interestRate: loan?.interestRate,
+    monthlyMinimumPayment: loan?.monthlyMinimumPayment,
+    date: loan?.date,
+  };
+};
+
+const mapDispatchToProps = {
+  updateLoan,
+  removeLoan,
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type Props = PropsFromRedux & {
+  loanId: string;
+};
+
+function AddLoanForm(props: Props) {
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -39,10 +64,10 @@ function AddLoanForm(props) {
             inputComponent: DecimalInput,
             inputProps: {
               value: props.balance,
-              onValueChange: (value) => {
+              onChange: (e) => {
                 props.updateLoan({
                   id: props.loanId,
-                  balance: value,
+                  balance: parseFloat((e.target as HTMLTextAreaElement).value),
                 });
               },
             },
@@ -60,7 +85,7 @@ function AddLoanForm(props) {
           inputVariant="outlined"
           value={props.date || moment()}
           onChange={(date) =>
-            props.updateLoan({ id: props.loanId, date: date })
+            props.updateLoan({ id: props.loanId, date: moment(date) })
           }
           KeyboardButtonProps={{
             "aria-label": "change date",
@@ -74,17 +99,20 @@ function AddLoanForm(props) {
           variant="outlined"
           margin="normal"
           InputProps={{
-            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+            // endAdornment: <InputAdornment position="end">%</InputAdornment>,
             inputComponent: DecimalInput,
             inputProps: {
               value: props.interestRate,
-              onValueChange: (value) => {
+              onChange: (e) => {
                 props.updateLoan({
                   id: props.loanId,
-                  interestRate: value,
+                  interestRate: parseFloat(
+                    (e.target as HTMLTextAreaElement).value
+                  ),
                 });
               },
               max: 100,
+              suffix: "%",
             },
           }}
           InputLabelProps={{ shrink: true }}
@@ -101,10 +129,12 @@ function AddLoanForm(props) {
             inputComponent: DecimalInput,
             inputProps: {
               value: props.monthlyMinimumPayment,
-              onValueChange: (value) => {
+              onChange: (e) => {
                 props.updateLoan({
                   id: props.loanId,
-                  monthlyMinimumPayment: value,
+                  monthlyMinimumPayment: parseFloat(
+                    (e.target as HTMLTextAreaElement).value
+                  ),
                 });
               },
             },
@@ -148,20 +178,4 @@ function AddLoanForm(props) {
   );
 }
 
-const mapStateToProps = (state, ownProps) => {
-  const loan = getLoan(state, ownProps);
-  return {
-    id: loan?.id,
-    balance: loan?.balance,
-    interestRate: loan?.interestRate,
-    monthlyMinimumPayment: loan?.monthlyMinimumPayment,
-    date: loan?.date,
-  };
-};
-
-const mapDispatchToProps = {
-  updateLoan,
-  removeLoan,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddLoanForm);
+export default connector(AddLoanForm);

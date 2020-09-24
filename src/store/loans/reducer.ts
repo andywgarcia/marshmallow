@@ -1,13 +1,14 @@
 import * as Actions from "../actionTypes";
 import moment from "moment";
 import { Loan, State } from "./types";
+import { v4 as uuid } from "uuid";
 
 const initialState: State = {
   allLoans: [],
 };
 
 const newLoan: Loan = {
-  id: null,
+  id: uuid(),
   balance: 0,
   interestRate: 0,
   monthlyMinimumPayment: 0,
