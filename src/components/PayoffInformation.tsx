@@ -94,8 +94,10 @@ const PayoffInformation = (props) => {
             inputComponent: DecimalInput,
             inputProps: {
               value: props.monthlyPayment,
-              onValueChange: (value) => {
-                props.setAvailableLoanPaymentAmount(value);
+              onChange: (e) => {
+                props.setAvailableLoanPaymentAmount(
+                  parseFloat((e.target as HTMLTextAreaElement).value)
+                );
               },
             },
           }}
