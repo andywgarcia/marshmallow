@@ -2,21 +2,29 @@ import React from "react";
 import { connect } from "react-redux";
 import * as selectors from "../store/selectors";
 import { Line as LineChart } from "react-chartjs-2";
-import { LoansPayment, LoanPayment } from "../store/loans/types";
+import { LoansPayment, LoanPayment, Loan } from "../store/loans/types";
 import moment from "moment";
 
 const PaymentPlanGraph = ({
   potentialPaymentPlan,
   paymentPlan,
   allLoansIds,
+  loans,
 }: {
   potentialPaymentPlan: LoansPayment[];
   paymentPlan: LoansPayment[];
   allLoansIds: string[];
+  loans: Loan[];
 }) => {
+  const oldestLoanDate = loans.reduce((acc, curr) => {
+    if (curr.date && moment(curr.date).isBefore(acc)) {
+      return moment(curr.date);
+    }
+    return acc;
+  }, moment());
   const labels = paymentPlan.map(
     (_monthPayment: LoansPayment, index: number) => {
-      const date = moment().add(index, "M").format("MMM-YY");
+      const date = moment(oldestLoanDate).add(index, "M").format("MMM-YY");
       return date;
     }
   );
@@ -145,6 +153,7 @@ const mapState = (state) => {
     potentialPaymentPlan,
     paymentPlan,
     allLoansIds,
+    loans: selectors.getAllLoans(state),
   };
 };
 
