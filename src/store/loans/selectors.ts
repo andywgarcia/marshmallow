@@ -134,13 +134,14 @@ const getUpdatedPaymentsThisMonthWithExtraMonthlyPayments = (
     .sort(sortFunction)
     .map(
       (loan: LoanPayment): LoanPayment => {
-        if (Number.parseFloat((loan.balance - loan.payment).toFixed(2)) <= 0) {
+        if (Number.parseFloat(loan.balance.toFixed(2)) <= 0) {
           return {
             ...loan,
             balance: 0,
             payment: 0,
           };
         }
+
         const remainingBalance = loan.balance - loan.payment;
 
         if (Number.parseFloat(remainingBalance.toFixed(2)) > 0) {
