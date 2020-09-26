@@ -132,13 +132,16 @@ const getUpdatedPaymentsThisMonthWithExtraMonthlyPayments = (
   const updatedLoanPayments: LoansPayment = Object.values(
     paymentsThisMonthWithoutAdditionalPayments
   )
-    .filter(
-      (loan: LoanPayment) =>
-        Number.parseFloat((loan.balance - loan.payment).toFixed(2)) > 0
-    )
     .sort(sortFunction)
     .map(
       (loan: LoanPayment): LoanPayment => {
+        if (Number.parseFloat((loan.balance - loan.payment).toFixed(2)) <= 0) {
+          return {
+            ...loan,
+            balance: 0,
+            payment: 0,
+          };
+        }
         const remainingBalance = loan.balance - loan.payment;
 
         if (Number.parseFloat(remainingBalance.toFixed(2)) > 0) {
@@ -147,14 +150,12 @@ const getUpdatedPaymentsThisMonthWithExtraMonthlyPayments = (
             newPayment = {
               ...loan,
               payment: loan.payment + remainingBalance,
-              extraPayment: remainingBalance,
             };
             extraPaymentAmount -= remainingBalance;
           } else {
             newPayment = {
               ...loan,
               payment: loan.payment + extraPaymentAmount,
-              extraPayment: extraPaymentAmount,
             };
             extraPaymentAmount = 0;
           }
