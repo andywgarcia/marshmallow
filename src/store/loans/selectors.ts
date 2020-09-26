@@ -34,15 +34,15 @@ const capitalizeBalance = (
 };
 
 const isLoanActive = (loan: Loan, date: Moment): boolean => {
-  if (loan.date) {
-    return moment(loan.date).isSameOrBefore(date, "month");
+  if (loan.startDate) {
+    return moment(loan.startDate).isSameOrBefore(date, "month");
   }
   return true;
 };
 
 const isLoanInFirstMonth = (loan: Loan, date: Moment): boolean => {
-  if (loan.date) {
-    return moment(loan.date).add(1, "M").isSame(date, "month");
+  if (loan.startDate) {
+    return moment(loan.startDate).add(1, "M").isSame(date, "month");
   }
   return false;
 };
@@ -60,17 +60,16 @@ const getNextPayments = (
     .reverse()
     .reduce((acc, loan) => {
       if (!isLoanActive(loan, date)) {
+        const updatedLoan: LoanPayment = {
+          ...loan,
+          id: loan.id,
+          balance: 0,
+          payment: 0,
+          balanceDate: date,
+        };
         return {
           ...acc,
-          [loan.id]: {
-            ...loan,
-            id: loan.id,
-            balance: 0,
-            payment: 0,
-            date: date,
-            interestRate: loan.interestRate,
-            monthlyMinimumPayment: 0,
-          },
+          [loan.id]: updatedLoan,
         };
       }
 
@@ -105,16 +104,16 @@ const getNextPayments = (
         }
       }
       spent += payment;
+      const updatedLoan: LoanPayment = {
+        ...loan,
+        id: loan.id,
+        balance: capitalizedBalance,
+        payment: payment,
+        balanceDate: date,
+      };
       return {
         ...acc,
-        [loan.id]: {
-          ...loan,
-          id: loan.id,
-          balance: capitalizedBalance,
-          payment: payment,
-          date: date,
-          interestRate: loan.interestRate,
-        },
+        [loan.id]: updatedLoan,
       };
     }, {});
   return { paymentsThisMonthWithoutAdditionalPayments, spent };
@@ -176,8 +175,8 @@ const getUpdatedPaymentsThisMonthWithExtraMonthlyPayments = (
 
 const getOldestLoanDate = (loans: Loan[]): Moment => {
   return loans.reduce((acc, curr) => {
-    if (curr.date && moment(curr.date).isBefore(acc)) {
-      return moment(curr.date);
+    if (curr.startDate && moment(curr.startDate).isBefore(acc)) {
+      return moment(curr.startDate);
     }
     return acc;
   }, moment());

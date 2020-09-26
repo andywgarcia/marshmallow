@@ -85,7 +85,10 @@ function AddLoanForm(props: Props) {
           inputVariant="outlined"
           value={props.date || moment()}
           onChange={(date) =>
-            props.updateLoan({ id: props.loanId, date: moment(date) })
+            props.updateLoan({
+              id: props.loanId,
+              startDate: moment(date),
+            })
           }
           KeyboardButtonProps={{
             "aria-label": "change date",

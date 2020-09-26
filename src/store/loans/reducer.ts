@@ -12,7 +12,7 @@ const newLoan: Loan = {
   balance: 0,
   interestRate: 0,
   monthlyMinimumPayment: 0,
-  date: moment(),
+  startDate: moment(),
 };
 
 export default (state: State = initialState, action) => {

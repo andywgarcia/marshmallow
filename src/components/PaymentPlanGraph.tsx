@@ -17,8 +17,8 @@ const PaymentPlanGraph = ({
   loans: Loan[];
 }) => {
   const oldestLoanDate = loans.reduce((acc, curr) => {
-    if (curr.date && moment(curr.date).isBefore(acc)) {
-      return moment(curr.date);
+    if (curr.startDate && moment(curr.startDate).isBefore(acc)) {
+      return moment(curr.startDate);
     }
     return acc;
   }, moment());

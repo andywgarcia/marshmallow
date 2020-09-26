@@ -5,7 +5,7 @@ export interface Loan {
   balance: number;
   interestRate: number;
   monthlyMinimumPayment: number;
-  date: Moment;
+  startDate: Moment;
 }
 
 export interface State {
@@ -16,7 +16,8 @@ export interface LoanPayment {
   id: string;
   balance: number;
   payment: number;
-  date: Moment;
+  balanceDate: Moment;
+  startDate: Moment;
 }
 
 export interface LoansPayment {
