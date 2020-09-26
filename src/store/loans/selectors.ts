@@ -40,6 +40,13 @@ const isLoanActive = (loan: Loan, date: Moment): boolean => {
   return true;
 };
 
+const isLoanInFirstMonth = (loan: Loan, date: Moment): boolean => {
+  if (loan.date) {
+    return moment(loan.date).add(1, "M").isSame(date, "month");
+  }
+  return false;
+};
+
 const getNextPayments = (
   loans: Loan[],
   paymentHistory: LoansPayment[],
@@ -50,15 +57,34 @@ const getNextPayments = (
 } => {
   let spent = 0;
   const paymentsThisMonthWithoutAdditionalPayments = [...loans]
-    // This needs to check for if the loan is active (loan A could have started 1 year before loan B, so loan B won't be active until after that first year)
-    // .filter((loan) => isLoanActive(loan, date))
     .reverse()
     .reduce((acc, loan) => {
-      const balance =
-        paymentHistory.length > 0 &&
-        paymentHistory[paymentHistory.length - 1][loan.id] !== undefined
-          ? paymentHistory[paymentHistory.length - 1][loan.id].balance
-          : loan.balance;
+      if (!isLoanActive(loan, date)) {
+        return {
+          ...acc,
+          [loan.id]: {
+            ...loan,
+            id: loan.id,
+            balance: 0,
+            payment: 0,
+            date: date,
+            interestRate: loan.interestRate,
+            monthlyMinimumPayment: 0,
+          },
+        };
+      }
+
+      const getBalance = (history, l): number => {
+        if (isLoanInFirstMonth(l, date)) {
+          return l.balance;
+        }
+        return history.length > 0 &&
+          history[history.length - 1][l.id] !== undefined
+          ? history[history.length - 1][l.id].balance
+          : l.balance;
+      };
+
+      const balance = getBalance(paymentHistory, loan);
 
       const lastPayment =
         paymentHistory.length > 0 &&
@@ -86,6 +112,7 @@ const getNextPayments = (
           id: loan.id,
           balance: capitalizedBalance,
           payment: payment,
+          date: date,
           interestRate: loan.interestRate,
         },
       };
