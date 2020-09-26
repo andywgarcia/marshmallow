@@ -8,11 +8,13 @@ import moment from "moment";
 const PaymentPlanGraph = ({
   potentialPaymentPlan,
   paymentPlan,
+  noExtraSpendingPaymentPlan,
   allLoansIds,
   loans,
 }: {
   potentialPaymentPlan: LoansPayment[];
   paymentPlan: LoansPayment[];
+  noExtraSpendingPaymentPlan: LoansPayment[];
   allLoansIds: string[];
   loans: Loan[];
 }) => {
@@ -28,7 +30,16 @@ const PaymentPlanGraph = ({
       return date;
     }
   );
-  const totalLoanAmountsData = potentialPaymentPlan.map(
+  const totalLoanAmountsData = paymentPlan.map((monthPayment: LoansPayment) => {
+    const loanIds = Object.keys(monthPayment);
+    const totalAmount = loanIds.reduce((acc: number, curr: string) => {
+      const loanPayment: LoanPayment = monthPayment[curr];
+      return acc + loanPayment.balance - loanPayment.payment;
+    }, 0);
+    return totalAmount;
+  });
+
+  const potentialTotalLoanAmountsData = potentialPaymentPlan.map(
     (monthPayment: LoansPayment) => {
       const loanIds = Object.keys(monthPayment);
       const totalAmount = loanIds.reduce((acc: number, curr: string) => {
@@ -39,7 +50,7 @@ const PaymentPlanGraph = ({
     }
   );
 
-  const totalLoanAmountsNoExtraPaymentData = paymentPlan.map(
+  const totalLoanAmountsNoExtraPaymentData = noExtraSpendingPaymentPlan.map(
     (monthPayment: LoansPayment) => {
       const loanIds = Object.keys(monthPayment);
       const totalAmount = loanIds.reduce((acc: number, curr: string) => {
@@ -127,6 +138,27 @@ const PaymentPlanGraph = ({
         pointHitRadius: 10,
         data: totalLoanAmountsNoExtraPaymentData,
       },
+      {
+        label: "Potential New Payment Plan",
+        fill: true,
+        lineTension: 0.1,
+        backgroundColor: "rgba(180, 50, 180,0.4)",
+        borderColor: "rgba(180, 50, 180,1)",
+        borderCapStyle: "butt",
+        borderDash: [],
+        borderDashOffset: 0.0,
+        borderJoinStyle: "miter",
+        pointBorderColor: "rgba(180, 50, 180,1)",
+        pointBackgroundColor: "#fff",
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: "rgba(180, 50, 180,1)",
+        pointHoverBorderColor: "rgba(220,220,220,1)",
+        pointHoverBorderWidth: 2,
+        pointRadius: 1,
+        pointHitRadius: 10,
+        data: potentialTotalLoanAmountsData,
+      },
     ],
   };
 
@@ -148,10 +180,14 @@ const mapState = (state) => {
   );
 
   const paymentPlan = selectors.getPaymentPlanWithAdditionalPayments(state);
+  const noExtraSpendingPaymentPlan = selectors.getPaymentPlanWithAdditionalPayments(
+    state
+  );
   const allLoansIds = selectors.getAllLoans(state).map((loan) => loan.id);
   return {
     potentialPaymentPlan,
     paymentPlan,
+    noExtraSpendingPaymentPlan,
     allLoansIds,
     loans: selectors.getAllLoans(state),
   };
