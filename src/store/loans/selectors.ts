@@ -295,12 +295,10 @@ export const getPaymentPlanWithAllPotentialAddtionalPayments = createSelector(
   generatePaymentPlan
 );
 
-export const getTotalPrincipal = createSelector(
-  [(state: any) => state.loans.allLoans],
-  (loans) =>
-    loans.reduce((acc, curr) => {
-      return acc + curr.balance;
-    }, 0)
+export const getTotalPrincipal = createSelector([allLoans], (loans) =>
+  loans.reduce((acc, curr) => {
+    return acc + curr.balance;
+  }, 0)
 );
 
 export const getMonthsAwayFromPayoff = createSelector(
@@ -341,3 +339,5 @@ export const getPotentialTotalPaid = createSelector(
   [getPaymentPlanWithAllPotentialAddtionalPayments],
   getTotalPaidForPaymentPlan
 );
+
+export const getAllLoans = createSelector([allLoans], (loans) => loans);

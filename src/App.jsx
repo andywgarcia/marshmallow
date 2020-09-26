@@ -5,6 +5,7 @@ import Container from "@material-ui/core/Container";
 import { Router } from "@reach/router";
 import LoanCalculator from "./pages/LoanCalculator";
 import EditLoan from "./pages/EditLoan";
+import PaymentPlan from "./pages/PaymentPlan";
 import LeftDrawer from "./components/navigation/LeftDrawer";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -100,6 +101,7 @@ function App() {
                   <LoanCalculator path="/" />
                   <EditLoan path="/loan/:loanId" />
                   <LoanOverview path="/loans" />
+                  <PaymentPlan path="/plan" />
                 </Router>
               </main>
             </Container>
