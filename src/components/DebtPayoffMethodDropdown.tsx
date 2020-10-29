@@ -24,7 +24,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const DebtPayoffDropdown = ({
+const DebtPayoffMethodDropdown = ({
   debtPayoffMethod,
   setDebtPayoffMethod,
 }: PropsFromRedux) => {
@@ -53,4 +53,4 @@ const DebtPayoffDropdown = ({
   );
 };
 
-export default connector(DebtPayoffDropdown);
+export default connector(DebtPayoffMethodDropdown);

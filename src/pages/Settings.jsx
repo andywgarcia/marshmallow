@@ -1,10 +1,10 @@
 import React from "react";
-import PaymentPlanDropdown from "../components/PaymentPlanDropdown";
+import DebtPayoffMethodDropdown from "../components/DebtPayoffMethodDropdown";
 
 const Settings = () => {
   return (
     <div>
-      <PaymentPlanDropdown></PaymentPlanDropdown>
+      <DebtPayoffMethodDropdown></DebtPayoffMethodDropdown>
     </div>
   );
 };
