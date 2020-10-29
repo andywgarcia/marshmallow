@@ -13,7 +13,7 @@ export const setDesiredSpending = createAction<DesiredSpendingPayload>(
 
 export const addExtraPayment = createAction(Actions.ADD_EXTRA_PAYMENT);
 
-export const setAvailableLoanPaymentAmount = createAction(
+export const setAvailableLoanPaymentAmount = createAction<number>(
   Actions.SET_AVAILABLE_LOAN_PAYMENT_AMOUNT
 );
 
