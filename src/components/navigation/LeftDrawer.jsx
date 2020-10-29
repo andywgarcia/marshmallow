@@ -5,6 +5,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 import AddIcon from "@material-ui/icons/Add";
 import CalendarIcon from "@material-ui/icons/CalendarToday";
+import SettingsIcon from "@material-ui/icons/Settings";
 import List from "@material-ui/core/List";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import ListItem from "@material-ui/core/ListItem";
@@ -77,6 +78,14 @@ function LeftDrawer(props) {
               <CalendarIcon />
             </ListItemIcon>
             <ListItemText primary="Plan" />
+          </ListItem>
+        </Link>
+        <Link to={`/settings`} onClick={props.closeDrawer}>
+          <ListItem button key="Settings" onClick={props.closeDrawer}>
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Settings" />
           </ListItem>
         </Link>
       </List>
