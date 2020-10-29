@@ -1,3 +1,5 @@
+import { PayoffMethod } from "../constants";
+
 export interface State {
-  payoffMethod: string;
+  payoffMethod: PayoffMethod;
 }

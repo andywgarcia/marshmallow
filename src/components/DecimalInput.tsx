@@ -1,5 +1,5 @@
 import React from "react";
-import CurrencyInput from "react-currency-input";
+import CurrencyInput from "./react-currency-input";
 
 function DecimalInput(props) {
   const { inputRef, onChange, max, ...other } = props;

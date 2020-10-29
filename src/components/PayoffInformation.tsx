@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
+import { connect, ConnectedProps } from "react-redux";
 import * as selectors from "../store/selectors";
 import { setAvailableLoanPaymentAmount } from "../store/actions";
 import {
@@ -12,7 +12,23 @@ import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
 import DecimalInput from "./DecimalInput";
 
-const PayoffInformation = (props) => {
+const mapStateToProps = (state) => {
+  return {
+    monthsAwayFromPayoff: selectors.getMonthsAwayFromPayoff(state),
+    totalInterest: selectors.getTotalInterestPaid(state),
+    principal: selectors.getTotalPrincipal(state),
+    monthlyMinPayment: selectors.getTotalMonthlyMinPayment(state),
+    monthlyPayment: state.availableAmounts.monthlyPayment,
+  };
+};
+
+const mapDispatchToProps = { setAvailableLoanPaymentAmount };
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+const PayoffInformation = (props: PropsFromRedux) => {
   return (
     <div>
       <Typography variant="h4" color="initial">
@@ -91,11 +107,14 @@ const PayoffInformation = (props) => {
                 </IconButton>
               </InputAdornment>
             ),
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
             inputComponent: DecimalInput,
             inputProps: {
               value: props.monthlyPayment,
-              onValueChange: (value) => {
-                props.setAvailableLoanPaymentAmount(value);
+              onChange: (e) => {
+                props.setAvailableLoanPaymentAmount(
+                  parseFloat((e.target as HTMLTextAreaElement).value)
+                );
               },
             },
           }}
@@ -120,16 +139,4 @@ PayoffInformation.defaultProps = {
   principal: 0,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    monthsAwayFromPayoff: selectors.getMonthsAwayFromPayoff(state),
-    totalInterest: selectors.getTotalInterestPaid(state),
-    principal: selectors.getTotalPrincipal(state),
-    monthlyMinPayment: selectors.getTotalMonthlyMinPayment(state),
-    monthlyPayment: state.availableAmounts.monthlyPayment,
-  };
-};
-
-export default connect(mapStateToProps, { setAvailableLoanPaymentAmount })(
-  PayoffInformation
-);
+export default connector(PayoffInformation);

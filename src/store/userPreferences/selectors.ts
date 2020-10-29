@@ -1,15 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { PAYOFF_METHODS } from "../constants";
+import { PayoffMethod } from "../constants";
 import { RootState } from "../rootReducer";
 
-export function selectSortFunction(
-  payoffMethod = PAYOFF_METHODS.DEBT_AVALANCHE
-) {
-  console.log("Payoff method: ", payoffMethod);
+export function selectSortFunction(payoffMethod = PayoffMethod.DEBT_AVALANCHE) {
   switch (payoffMethod) {
-    case PAYOFF_METHODS.DEBT_SNOWBALL:
+    case PayoffMethod.DEBT_SNOWBALL:
       return (loan1, loan2) => loan1.balance - loan2.balance;
-    case PAYOFF_METHODS.DEBT_AVALANCHE:
+    case PayoffMethod.DEBT_AVALANCHE:
     default:
       return (loan1, loan2) => loan2.interestRate - loan1.interestRate;
   }

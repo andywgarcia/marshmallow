@@ -99,7 +99,7 @@ function AddLoanForm(props: Props) {
           variant="outlined"
           margin="normal"
           InputProps={{
-            // endAdornment: <InputAdornment position="end">%</InputAdornment>,
+            endAdornment: <InputAdornment position="end">%</InputAdornment>,
             inputComponent: DecimalInput,
             inputProps: {
               value: props.interestRate,
@@ -112,7 +112,7 @@ function AddLoanForm(props: Props) {
                 });
               },
               max: 100,
-              suffix: "%",
+              // suffix: "%",
             },
           }}
           InputLabelProps={{ shrink: true }}
